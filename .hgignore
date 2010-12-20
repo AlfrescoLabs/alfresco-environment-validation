@@ -1,0 +1,8 @@
+# Note: .hgignore files use regexes, not file globs, for wildcards
+# See http://linux.die.net/man/5/hgignore for more detail
+target
+test.*.sh
+.*PingOutput.txt
+.classpath
+.project
+evt-.*.zip
