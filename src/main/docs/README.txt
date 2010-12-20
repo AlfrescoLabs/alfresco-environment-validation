@@ -7,7 +7,7 @@ environment is suitable for installation of an Alfresco Enterprise 3.3.x
 server.
 
 Please note that this tool is not exhaustive - it simply validates some of the
-more common environmental problems Alfresco support has seen.
+more common environmental problems Alfresco has seen.
 
 
 Author
