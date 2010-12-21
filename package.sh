@@ -14,3 +14,4 @@ cp src/main/docs/* target/package/evt-${VERSION}/
 pushd target/package/
 zip -9 -r ../evt-${VERSION}.zip evt-${VERSION}
 popd > /dev/null
+echo "\nEVT distributable package may be found at 'target/evt-${VERSION}.zip'\n"
