@@ -1,14 +1,25 @@
 Description
 -----------
-This module provides a rudimentary "environment validation" tool for servers
-on which Alfresco is intended to be installed.  This is packaged as an
-executable JAR file that runs a series of tests to determine whether the
-environment is suitable for installation of an Alfresco Enterprise 3.3.x
-server.
+This module provides a rudimentary "environment validation" tool that helps
+determine whether a server is suitable for using to host the Alfresco open
+source CMS.
+
+The tool is provided as an archive (zip) file that (when uncompressed)
+contains executable scripts that will run the tool. The tool itself is
+implemented as a Java (JVM 1.4+) command line application.
 
 Please note that this tool is not exhaustive - it simply validates some of the
-more common environmental problems Alfresco has seen.
+more common environmental problems Alfresco has seen. Administrators intending
+to install Alfresco should ensure they have fully validated that their
+environment is on the Alfresco Supported Stack. They should also ensure they
+have reviewed, understood and applied the various installation related
+information available from the Alfresco Network, the Alfresco Wiki and
+official product documentation.
 
+After completing environment validation, but prior to installation,
+administrators should also review the Alfresco Day Zero Configuration Guide,
+to ensure they are able to complete basic configuration of Alfresco
+immediately following installation.
 
 Author
 ------
