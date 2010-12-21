@@ -7,7 +7,7 @@ mvn clean package
 # Package
 #TODO: Move this into Maven build script
 mkdir -p target/package/evt-${VERSION}/
-cp -R lib/ target/package/evt-${VERSION}/lib/
+cp -R src/main/lib/ target/package/evt-${VERSION}/lib/
 cp target/environment-validation-*.jar target/package/evt-${VERSION}/lib/
 cp src/main/scripts/* target/package/evt-${VERSION}/
 cp src/main/docs/* target/package/evt-${VERSION}/
