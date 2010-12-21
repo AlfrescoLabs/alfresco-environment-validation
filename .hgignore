@@ -5,4 +5,5 @@ test.*.sh
 .*PingOutput.txt
 .classpath
 .project
+.settings
 evt-.*.zip
