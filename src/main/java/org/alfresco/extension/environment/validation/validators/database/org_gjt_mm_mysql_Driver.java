@@ -57,6 +57,7 @@ public class org_gjt_mm_mysql_Driver
     private final static String[] MYSQL_CONFIGURING_STORAGE_ENGINE_URI              = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/storage-engine-setting.html" };
     private final static String[] MYSQL_CONFIGURING_CHARACTER_SETS_URI              = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/charset-applications.html" };
     private final static String[] MYSQL_CONFIGURING_IDENTIFIER_CASE_SENSITIVITY_URI = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/identifier-case-sensitivity.html" };
+    private final static String[] MYSQL_AUTO_INCREMENT_LOCK_MODES_URI               = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/innodb-auto-increment-handling.html" };
     
                          
     /**
@@ -70,6 +71,7 @@ public class org_gjt_mm_mysql_Driver
         validateDatabaseVersion(callback, con);
         validateEngine(callback, con);
         validateIdentifierCaseSensitivityLevel(callback, con);
+        validateInnoDbAutoIncrementLockMode(callback, con);
         validateEncoding(callback, con);
     }
     
@@ -306,6 +308,75 @@ public class org_gjt_mm_mysql_Driver
                 testResult.ramification        = "Backups of the Alfresco database may be OS specific";
                 testResult.remedy              = "Manually validate that MySQL is configured to use case-insensitive identifiers; specifically, ensure that lower_case_table_names=1 in the MySQL configuration";
                 testResult.urisMoreInformation = MYSQL_CONFIGURING_IDENTIFIER_CASE_SENSITIVITY_URI;
+            }
+        }
+        catch (final SQLException se)
+        {
+            progress(callback, "unknown");
+            
+            testResult.resultType          = TestResult.WARN;
+            testResult.errorMessage        = "Unable to determine identifier case sensitivity level: " + se.getMessage();
+            testResult.ramification        = "Backups of the Alfresco database may be OS specific";
+            testResult.remedy              = "Manually validate that MySQL is configured to use case-insensitive identifiers; specifically, ensure that lower_case_table_names=1 in the MySQL configuration";
+            testResult.urisMoreInformation = MYSQL_CONFIGURING_IDENTIFIER_CASE_SENSITIVITY_URI;
+            testResult.rootCause           = se;
+        }
+        
+        endTest(callback, testResult);
+    }
+
+    
+    private final void validateInnoDbAutoIncrementLockMode(final ValidatorCallback callback, final Connection con)
+    {
+        startTest(callback, "Auto-inc Lock Mode");
+        
+        TestResult testResult = new TestResult();
+        
+        try
+        {
+            Map row = singletonQuery(con, "SHOW VARIABLES WHERE VARIABLE_NAME = 'innodb_autoinc_lock_mode'");
+            
+            if (row != null)
+            {
+                String identifierCaseSensitivityLevel = (String)row.get("VARIABLE_VALUE");
+                
+                if (identifierCaseSensitivityLevel != null && identifierCaseSensitivityLevel.trim().length() > 0)
+                {
+                    progress(callback, identifierCaseSensitivityLevel);
+                    
+                    if ("2".equals(identifierCaseSensitivityLevel))
+                    {
+                        testResult.resultType = TestResult.PASS;
+                    }
+                    else
+                    {
+                        testResult.resultType          = TestResult.WARN;
+                        testResult.errorMessage        = "Non-optimal InnoDB auto-increment lock mode configured";
+                        testResult.ramification        = "Alfresco may perform poorly under heavy write load due to excessive blocking in MySQL";
+                        testResult.remedy              = "Reconfigure MySQL with InnoDB auto-increment lock mode 2; specifically, set innodb_autoinc_lock_mode=2 in the MySQL configuration";
+                        testResult.urisMoreInformation = MYSQL_AUTO_INCREMENT_LOCK_MODES_URI;
+                    }
+                }
+                else
+                {
+                    progress(callback, "unknown");
+                    
+                    testResult.resultType          = TestResult.WARN;
+                    testResult.errorMessage        = "Unable to determine InnoDB auto-increment lock mode";
+                    testResult.ramification        = "Alfresco may perform poorly under heavy write load due to excessive blocking in MySQL";
+                    testResult.remedy              = "Manually validate that MySQL is configured with InnoDB auto-increment lock mode 2; specifically, set innodb_autoinc_lock_mode=2 in the MySQL configuration";
+                    testResult.urisMoreInformation = MYSQL_AUTO_INCREMENT_LOCK_MODES_URI;
+                }
+            }
+            else
+            {
+                progress(callback, "unknown");
+                
+                testResult.resultType          = TestResult.WARN;
+                testResult.errorMessage        = "Unable to determine InnoDB auto-increment lock mode";
+                testResult.ramification        = "Alfresco may perform poorly under heavy write load due to excessive blocking in MySQL";
+                testResult.remedy              = "Manually validate that MySQL is configured with InnoDB auto-increment lock mode 2; specifically, set innodb_autoinc_lock_mode=2 in the MySQL configuration";
+                testResult.urisMoreInformation = MYSQL_AUTO_INCREMENT_LOCK_MODES_URI;
             }
         }
         catch (final SQLException se)
