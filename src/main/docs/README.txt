@@ -84,3 +84,13 @@ separately by their respective parties:
 
 Source code for the Alfresco Environment Validation Tool itself is available
 from http://code.google.com/p/alfresco-environment-validation/source/checkout
+
+
+Release History
+---------------
+v0.10 released NOT YET RELEASED
+     Fixed issue #1: Minimum supported JDK version is 1.6.0_21
+     Fixed issue #5: Check innodb_autoinc_lock_mode=2 on MySQL
+
+v0.9 Released 2010-12-20
+     First public release
