@@ -431,11 +431,11 @@ public class OSValidator
                 {
                     if (redhatRelease.startsWith(RHEL5_DISTRIBUTION_NAME_PREFIX))
                     {
-                        result = new Pair(DISTRO_NAME_SUSE, OS_VERSION_RHEL_5);
+                        result = new Pair(DISTRO_NAME_RHEL, OS_VERSION_RHEL_5);
                     }
                     else
                     {
-                        result = new Pair(DISTRO_NAME_SUSE, null);
+                        result = new Pair(DISTRO_NAME_RHEL, null);
                     }
                 }
                 else
