@@ -297,20 +297,45 @@ public class OSValidator
         
         if (dataModel != null)
         {
+            String osName = System.getProperty(SYSTEM_PROPERTY_OS_NAME);
+            
             if ("64".equals(dataModel))
             {
                 progress(callback, dataModel + " bit");
                 
-                testResult.resultType = TestResult.PASS;
+                if (OS_NAME_WINDOWS_SERVER_2003.equals(osName))   // Windows 2003 64 bit is not supported
+                {
+                    testResult.resultType          = TestResult.WARN;
+                    testResult.errorMessage        = "Windows 2003 64 bit is not supported";
+                    testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
+                    testResult.remedy              = "Install a supported OS";
+                    testResult.urisMoreInformation = ALFRESCO_SPM_URIS;
+                }
+                else
+                {
+                    testResult.resultType = TestResult.PASS;
+                }
             }
             else if ("32".equals(dataModel))
             {
                 progress(callback, dataModel + " bit");
                 
-                testResult.resultType   = TestResult.INFO;
-                testResult.errorMessage = "32 bit operating system detected";
-                testResult.ramification = "32 bit architectures have inherent scalability limitations.  Alfresco will function correctly but for high-scale instances, a 64 bit architecture is recommended";
-                testResult.remedy       = "Consider installing a 64 bit operating system";
+                if (OS_NAME_WINDOWS_SERVER_2008.equals(osName))   // Windows 2008 32 bit is not supported
+                {
+                    testResult.resultType          = TestResult.WARN;
+                    testResult.errorMessage        = "Windows 2008 32 bit is not supported";
+                    testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
+                    testResult.remedy              = "Install a supported OS";
+                    testResult.urisMoreInformation = ALFRESCO_SPM_URIS;
+                }
+                else
+                {
+                    testResult.resultType          = TestResult.INFO;
+                    testResult.errorMessage        = "32 bit operating system detected";
+                    testResult.ramification        = "32 bit architectures have inherent scalability limitations.  Alfresco will function correctly but for high-scale instances, a 64 bit architecture is recommended";
+                    testResult.remedy              = "Consider installing a supported 64 bit operating system";
+                    testResult.urisMoreInformation = ALFRESCO_SPM_URIS;
+                }
             }
             else if ("unknown".equalsIgnoreCase(dataModel))
             {
