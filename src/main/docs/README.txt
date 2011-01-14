@@ -88,9 +88,12 @@ from http://code.google.com/p/alfresco-environment-validation/source/checkout
 
 Release History
 ---------------
-v0.10 released NOT YET RELEASED
+v0.10 released 2011-01-14
      Fixed issue #1: Minimum supported JDK version is 1.6.0_21
      Fixed issue #5: Check innodb_autoinc_lock_mode=2 on MySQL
+     Fixed issue #6: Only Windows 2003 32 bit is supported
+     Fixed issue #7: Only Windows 2008 64 bit is supported
+     Fixed issue #8: RHEL detection code is incorrectly reporting distro as SUSE
 
 v0.9 Released 2010-12-20
      First public release
