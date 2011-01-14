@@ -1,5 +1,5 @@
 #!/bin/sh
-VERSION=0.10-SNAPSHOT
+VERSION=0.10
 
 # Build (afresh)
 mvn clean package
