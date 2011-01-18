@@ -88,6 +88,9 @@ from http://code.google.com/p/alfresco-environment-validation/source/checkout
 
 Release History
 ---------------
+v0.11 NOT YET RELEASED
+     Fixed issue #9: PostgreSQL: add test to ensure implicit int -> boolean typecasts are enabled
+
 v0.10 released 2011-01-14
      Fixed issue #1: Minimum supported JDK version is 1.6.0_21
      Fixed issue #5: Check innodb_autoinc_lock_mode=2 on MySQL
