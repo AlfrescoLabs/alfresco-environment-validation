@@ -58,7 +58,7 @@ public class org_gjt_mm_mysql_Driver
     private final static String[] MYSQL_CONFIGURING_CHARACTER_SETS_URI              = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/charset-applications.html" };
     private final static String[] MYSQL_CONFIGURING_IDENTIFIER_CASE_SENSITIVITY_URI = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/identifier-case-sensitivity.html" };
     private final static String[] MYSQL_AUTO_INCREMENT_LOCK_MODES_URI               = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/innodb-auto-increment-handling.html" };
-    
+    private final static String[] MYSQL_WAIT_TIMEOUT_URI                            = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/server-system-variables.html#sysvar_wait_timeout" };
                          
     /**
      * @see org.alfresco.extension.environment.validation.validators.database.DBSpecificValidator#validate(org.alfresco.extension.environment.validation.ValidatorCallback, java.sql.Connection)
@@ -72,6 +72,7 @@ public class org_gjt_mm_mysql_Driver
         validateEngine(callback, con);
         validateIdentifierCaseSensitivityLevel(callback, con);
         validateInnoDbAutoIncrementLockMode(callback, con);
+        validateWaitTimeout(callback, con);
         validateEncoding(callback, con);
     }
     
@@ -136,6 +137,7 @@ public class org_gjt_mm_mysql_Driver
                                 testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
                                 testResult.remedy              = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL + " is installed";
                                 testResult.urisMoreInformation = MYSQL_URI;
+                                testResult.rootCause           = nfe;
                             }
                         }
                         else
@@ -388,6 +390,89 @@ public class org_gjt_mm_mysql_Driver
             testResult.ramification        = "Backups of the Alfresco database may be OS specific";
             testResult.remedy              = "Manually validate that MySQL is configured to use case-insensitive identifiers; specifically, ensure that lower_case_table_names=1 in the MySQL configuration";
             testResult.urisMoreInformation = MYSQL_CONFIGURING_IDENTIFIER_CASE_SENSITIVITY_URI;
+            testResult.rootCause           = se;
+        }
+        
+        endTest(callback, testResult);
+    }
+
+    
+    private final void validateWaitTimeout(final ValidatorCallback callback, final Connection con)
+    {
+        startTest(callback, "Wait timeout");
+        
+        TestResult testResult = new TestResult();
+        
+        try
+        {
+            Map row = singletonQuery(con, "SHOW VARIABLES WHERE VARIABLE_NAME = 'wait_timeout'");
+            
+            if (row != null)
+            {
+                String waitTimeoutStr = (String)row.get("VARIABLE_VALUE");
+                
+                if (waitTimeoutStr != null && waitTimeoutStr.trim().length() > 0)
+                {
+                    progress(callback, waitTimeoutStr);
+                    
+                    try
+                    {
+                        long waitTimeout = Long.valueOf(waitTimeoutStr).longValue();
+                        
+                        if (waitTimeout >= 28800)   // 28800ms (8 hours) is the default for wait_timeout, and is an appropriate value for Alfresco
+                        {
+                            testResult.resultType = TestResult.PASS;
+                        }
+                        else
+                        {
+                            testResult.resultType          = TestResult.WARN;
+                            testResult.errorMessage        = "Non-optimal wait timeout configured";
+                            testResult.ramification        = "Alfresco may lose connections to MySQL without further configuration of the database connection pool";
+                            testResult.remedy              = "Reconfigure MySQL back to the default wait timeout; specifically, set wait_timeout=28800 in the MySQL configuration, or remove this setting altogether";
+                            testResult.urisMoreInformation = MYSQL_WAIT_TIMEOUT_URI;
+                        }
+                    }
+                    catch (final NumberFormatException nfe)
+                    {
+                        testResult.resultType          = TestResult.WARN;
+                        testResult.errorMessage        = "Unable to determine wait timeout";
+                        testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
+                        testResult.remedy              = "Manually validate that the wait timeout is at least 28800";
+                        testResult.urisMoreInformation = MYSQL_WAIT_TIMEOUT_URI;
+                        testResult.rootCause           = nfe;
+                    }
+                }
+                else
+                {
+                    progress(callback, "unknown");
+                    
+                    testResult.resultType          = TestResult.WARN;
+                    testResult.errorMessage        = "Unable to determine wait timeout";
+                    testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
+                    testResult.remedy              = "Manually validate that the wait timeout is at least 28800";
+                    testResult.urisMoreInformation = MYSQL_WAIT_TIMEOUT_URI;
+                }
+            }
+            else
+            {
+                progress(callback, "unknown");
+                
+                testResult.resultType          = TestResult.WARN;
+                testResult.errorMessage        = "Unable to determine wait timeout";
+                testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
+                testResult.remedy              = "Manually validate that the wait timeout is at least 28800";
+                testResult.urisMoreInformation = MYSQL_WAIT_TIMEOUT_URI;
+            }
+        }
+        catch (final SQLException se)
+        {
+            progress(callback, "unknown");
+            
+            testResult.resultType          = TestResult.WARN;
+            testResult.errorMessage        = "Unable to determine wait timeout";
+            testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
+            testResult.remedy              = "Manually validate that the wait timeout is at least 28800";
+            testResult.urisMoreInformation = MYSQL_WAIT_TIMEOUT_URI;
             testResult.rootCause           = se;
         }
         
