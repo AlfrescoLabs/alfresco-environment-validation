@@ -58,7 +58,7 @@ public class JVMValidator
     
     private final static String JVM_VERSION_15                    = "1.5";
     private final static String JVM_VERSION_16                    = "1.6";
-    private final static int    JVM_VERSION_16_MINIMUM_PATCHLEVEL = 21;
+    private final static int    JVM_VERSION_16_MINIMUM_PATCHLEVEL = 22;
     
     private final static String   JAVA_DOWNLOAD_URI_STR               = "http://www.oracle.com/technetwork/java/javase/downloads/index.html";
     private final static String[] JAVA_DOWNLOAD_URI                   = { JAVA_DOWNLOAD_URI_STR };
