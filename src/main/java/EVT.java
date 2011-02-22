@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010 Alfresco Software Limited.
+ * Copyright (C) 2005-2011 Alfresco Software Limited.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -69,7 +69,7 @@ public class EVT
         if (parameters.containsKey("-v"))                                  verboseMode = 1;
         if (parameters.containsKey("-V") || parameters.containsKey("-vv")) verboseMode = 2;
         
-        System.out.println("\nAlfresco Environment Validation Tool (for Alfresco Enterprise 3.3)");
+        System.out.println("\nAlfresco Environment Validation Tool (for Alfresco Enterprise 3.4)");
         System.out.println("------------------------------------------------------------------");
 
         if (parameters.isEmpty()                                             ||
@@ -98,6 +98,10 @@ public class EVT
             System.out.println("            databaseLogin    - the login Alfresco will use to connect to the");
             System.out.println("                               database");
             System.out.println("            databasePassword - the password for that user (optional)");
+            System.out.println("");
+            System.out.println("The tool must be run as the OS user that Alfresco will run as.  In particular");
+            System.out.println("it will report erroneous results if run as \"root\" (or equivalent on other");
+            System.out.println("OSes) if Alfresco is not intended to be run as that user.");
             System.out.println("");
         }
         else

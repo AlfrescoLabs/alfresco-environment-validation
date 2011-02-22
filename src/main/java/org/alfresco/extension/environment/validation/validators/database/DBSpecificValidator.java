@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010 Alfresco Software Limited.
+ * Copyright (C) 2005-2011 Alfresco Software Limited.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ import org.alfresco.extension.environment.validation.ValidatorCallback;
 
 
 /**
- * This interface TODO
+ * This interface defines a database-vendor specific validator.
  *
  * @author Peter Monks (pmonks@alfresco.com)
  *

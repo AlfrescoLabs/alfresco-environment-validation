@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010 Alfresco Software Limited.
+ * Copyright (C) 2005-2011 Alfresco Software Limited.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,7 +43,6 @@ import org.alfresco.extension.environment.validation.TestResult;
 import org.alfresco.extension.environment.validation.ValidatorCallback;
 import org.alfresco.extension.environment.validation.ValidatorCallbackHelper;
 import org.alfresco.extension.util.ComparablePair;
-import org.alfresco.extension.util.Pair;
 
 
 /**
