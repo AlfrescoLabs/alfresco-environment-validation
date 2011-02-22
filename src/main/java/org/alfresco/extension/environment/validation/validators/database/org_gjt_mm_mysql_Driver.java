@@ -399,7 +399,7 @@ public class org_gjt_mm_mysql_Driver
     
     private final void validateWaitTimeout(final ValidatorCallback callback, final Connection con)
     {
-        startTest(callback, "Wait timeout");
+        startTest(callback, "Wait Timeout");
         
         TestResult testResult = new TestResult();
         
