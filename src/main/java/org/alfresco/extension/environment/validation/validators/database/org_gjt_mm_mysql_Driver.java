@@ -48,7 +48,7 @@ public class org_gjt_mm_mysql_Driver
     private final static ComparablePair[] SUPPORTED_JDBC_DRIVER_VERSION      = { new ComparablePair(new Integer(5), new Integer(1)) };
     private final static String           SUPPORTED_MYSQL_VERSION            = "5.1";
     private final static String           SUPPORTED_MYSQL_VERSION_SIGNATURE  = SUPPORTED_MYSQL_VERSION + ".";
-    private final static int              MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL = 39;
+    private final static int              MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL = 51;
     private final static String           FULL_VERSION_STRING                = SUPPORTED_MYSQL_VERSION_SIGNATURE + MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL;
     
     // "More information" URIs
