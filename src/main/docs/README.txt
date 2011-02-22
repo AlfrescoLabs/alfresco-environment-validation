@@ -52,6 +52,10 @@ where:      -?|--help        - display this help
                                database
             databasePassword - the password for that user (optional)
 
+The tool must be run as the OS user that Alfresco will run as.  In particular
+it will report erroneous results if run as "root" (or equivalent on other
+OSes) if Alfresco is not intended to be run as that user.
+
 
 Licensing
 ---------
