@@ -92,7 +92,7 @@ from http://code.google.com/p/alfresco-environment-validation/source/checkout
 
 Release History
 ---------------
-v0.11 NOT YET RELEASED - Alfresco 3.4
+v0.11 released 2011-03-02 - Alfresco 3.4
      Fixed issue #9: PostgreSQL: add test to ensure implicit int -> boolean typecasts are enabled
      Fixed issue #10: Update README to clarify that the tool must be run as the OS user that will run Alfresco
      Fixed issue #11: MySQL: Test "wait_timeout" system variable, and issue warning if it's below a specific threshold
