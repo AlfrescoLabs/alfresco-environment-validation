@@ -53,7 +53,7 @@ where:      -?|--help        - display this help
             databasePassword - the password for that user (optional)
 
 The tool must be run as the OS user that Alfresco will run as.  In particular
-it will report erroneous results if run as "root" (or equivalent on other
+it will report misleading results if run as "root" (or equivalent on other
 OSes) if Alfresco is not intended to be run as that user.
 
 
@@ -94,6 +94,10 @@ Release History
 ---------------
 v0.11 NOT YET RELEASED
      Fixed issue #9: PostgreSQL: add test to ensure implicit int -> boolean typecasts are enabled
+     Fixed issue #10: Update README to clarify that the tool must be run as the OS user that will run Alfresco
+     Fixed issue #11: MySQL: Test "wait_timeout" system variable, and issue warning if it's below a specific threshold
+     Fixed issue #15: Add check for pdf2swf version
+     Fixed issue #19: Replace handcoded 3rd party application version parsing code with regexes
 
 v0.10 released 2011-01-14
      Fixed issue #1: Minimum supported JDK version is 1.6.0_21

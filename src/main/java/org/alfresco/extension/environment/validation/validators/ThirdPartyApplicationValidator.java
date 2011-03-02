@@ -27,10 +27,13 @@ package org.alfresco.extension.environment.validation.validators;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.alfresco.extension.environment.validation.AbstractValidator;
 import org.alfresco.extension.environment.validation.TestResult;
 import org.alfresco.extension.environment.validation.ValidatorCallback;
+import org.alfresco.extension.util.Pair;
 
 
 /**
@@ -46,25 +49,32 @@ public class ThirdPartyApplicationValidator
     
     private final static String[]   OS_COMMAND_OPEN_OFFICE_UNIX     = { "soffice", "-headless", "-help" };   // Warning: doesn't terminate on Linux with OO 3.1
     private final static String[]   OS_COMMAND_OPEN_OFFICE_WINDOWS  = { "soffice", "-help" };
+    private final static Pattern    OPEN_OFFICE_VERSION_REGEX       = Pattern.compile("OpenOffice\\.org ([0-9]+\\.[0-9]+)");
     private final static String     MINIMUM_OPEN_OFFICE_VERSION_STR = "3.1";    //####TODO: Validate that this is the minimum supported version
     private final static BigDecimal MINIMUM_OPEN_OFFICE_VERSION     = new BigDecimal(MINIMUM_OPEN_OFFICE_VERSION_STR);
     
-    private final static String[] OPEN_OFFICE_DOWNLOAD_URI                      = { "http://download.openoffice.org/" };
-    private final static String[] OPEN_OFFICE_DOWNLOAD_URI_AND_ALFRESCO_OO_DOCS = { "http://download.openoffice.org/", "http://wiki.alfresco.com/wiki/Setting_up_OpenOffice_for_Alfresco" };
+    private final static String   OPEN_OFFICE_DOWNLOAD_URI                      = "http://download.openoffice.org/";
+    private final static String[] OPEN_OFFICE_DOWNLOAD_URIS                     = { OPEN_OFFICE_DOWNLOAD_URI };
+    private final static String[] OPEN_OFFICE_DOWNLOAD_URI_AND_ALFRESCO_OO_DOCS = { OPEN_OFFICE_DOWNLOAD_URI, "http://wiki.alfresco.com/wiki/Setting_up_OpenOffice_for_Alfresco" };
     
     
-    private final static String[] OS_COMMAND_IMAGE_MAGICK_UNIX    = { "convert", "-version" };
-    private final static String[] OS_COMMAND_IMAGE_MAGICK_WINDOWS = { "imconvert", "-version" };
-
+    private final static String[]   OS_COMMAND_IMAGE_MAGICK_UNIX     = { "convert", "-version" };
+    private final static String[]   OS_COMMAND_IMAGE_MAGICK_WINDOWS  = { "imconvert", "-version" };
+    private final static Pattern    IMAGE_MAGICK_VERSION_REGEX       = Pattern.compile("Version: ImageMagick (([0-9]+\\.[0-9]+)\\.[0-9]+(-[0-9]*)?)");
     private final static String     MINIMUM_IMAGE_MAGICK_VERSION_STR = "6.2";   ///####TODO: Validate that this is the minimum supported version
     private final static BigDecimal MINIMUM_IMAGE_MAGICK_VERSION     = new BigDecimal(MINIMUM_IMAGE_MAGICK_VERSION_STR);
     
-    private final static String[] IMAGE_MAGICK_DOWNLOAD_URI                      = { "http://www.imagemagick.org/" };
-    private final static String[] IMAGE_MAGICK_DOWNLOAD_URI_AND_ALFRESCO_IM_DOCS = { "http://www.imagemagick.org/", "http://wiki.alfresco.com/wiki/ImageMagick_Configuration" };  // Note: this wiki page is badly out of date...
+    private final static String   IMAGE_MAGICK_DOWNLOAD_URI                      = "http://www.imagemagick.org/";
+    private final static String[] IMAGE_MAGICK_DOWNLOAD_URIS                     = { IMAGE_MAGICK_DOWNLOAD_URI };
+    private final static String[] IMAGE_MAGICK_DOWNLOAD_URI_AND_ALFRESCO_IM_DOCS = { IMAGE_MAGICK_DOWNLOAD_URI, "http://wiki.alfresco.com/wiki/ImageMagick_Configuration" };  // Note: this wiki page is badly out of date...
     
-    //####TODO: Figure out if/how to check the pdf2swf version number
-    private final static String[] OS_COMMAND_PDF2SWF = { "pdf2swf", "-V" };
-    private final static String[] PDF2SWF_DOWNLOAD_URI_AND_ALFRESCO_IM_DOCS = { "http://www.swftools.org/", "http://wiki.alfresco.com/wiki/Installing_Alfresco_components#Installing_SWFTools" };
+    private final static String[]   OS_COMMAND_PDF2SWF                              = { "pdf2swf", "-V" };
+    private final static Pattern    PDF2SWF_VERSION_REGEX                           = Pattern.compile("pdf2swf - part of swftools (([0-9]\\.[0-9])?.*)");
+    private final static String     MINIMUM_PDF2SWF_VERSION_STR                     = "0.9";
+    private final static BigDecimal MINIMUM_PDF2SWF_VERSION                         = new BigDecimal(MINIMUM_PDF2SWF_VERSION_STR);
+    private final static String     PDF2SWF_DOWNLOAD_URI                            = "http://www.swftools.org/";
+    private final static String[]   PDF2SWF_DOWNLOAD_URIS                           = { PDF2SWF_DOWNLOAD_URI };
+    private final static String[]   PDF2SWF_DOWNLOAD_URI_AND_ALFRESCO_SWFTOOLS_DOCS = { "http://www.swftools.org/", "http://wiki.alfresco.com/wiki/Installing_Alfresco_components#Installing_SWFTools" };
     
     
     /**
@@ -82,7 +92,7 @@ public class ThirdPartyApplicationValidator
 
     private void validateOpenOffice(final ValidatorCallback callback)
     {
-        String openOfficeHelpOutput = validateForkOpenOffice(callback);
+        String openOfficeHelpOutput = validateCanForkOpenOffice(callback);
         
         if (openOfficeHelpOutput != null)
         {
@@ -90,7 +100,8 @@ public class ThirdPartyApplicationValidator
         }
     }
     
-    private String validateForkOpenOffice(final ValidatorCallback callback)
+    
+    private String validateCanForkOpenOffice(final ValidatorCallback callback)
     {
         startTest(callback, "Can fork OpenOffice");
         
@@ -135,13 +146,15 @@ public class ThirdPartyApplicationValidator
         startTest(callback, "OpenOffice Version");
         
         TestResult testResult = new TestResult();
-
+        
         // NOTE: It appears that OpenOffice uses some weird scheme to write its help screen - a scheme that doesn't result in the output going to stdout.
         //       As a result we are unable to read that output and parse it - instead all we get are a series of blank lines.  In this case we issue a
         //       warning to manually check the version number, which is probably the best of a bad lot of options.
-        BigDecimal openOfficeVersion = parseOpenOfficeVersion(openOfficeHelpOutput);
+        Pair       parsedVersion = parseVersionString(OPEN_OFFICE_VERSION_REGEX, openOfficeHelpOutput, 1, 1);
+        String     versionStr    = (String)parsedVersion.getFirst();
+        BigDecimal version       = (BigDecimal)parsedVersion.getSecond();
         
-        if (openOfficeVersion == null)
+        if (versionStr == null)
         {
             progress(callback, "unknown");
             
@@ -151,9 +164,9 @@ public class ThirdPartyApplicationValidator
         }
         else
         {
-            progress(callback, openOfficeVersion.toString());
+            progress(callback, versionStr);
             
-            if (MINIMUM_OPEN_OFFICE_VERSION.compareTo(openOfficeVersion) <= 0)
+            if (version != null && MINIMUM_OPEN_OFFICE_VERSION.compareTo(version) <= 0)
             {
                 testResult.resultType = TestResult.PASS;
             }
@@ -163,53 +176,17 @@ public class ThirdPartyApplicationValidator
                 testResult.errorMessage        = "Alfresco requires OpenOffice v" + MINIMUM_OPEN_OFFICE_VERSION_STR + " or greater";
                 testResult.ramification        = "While Alfresco will start correctly, various document transformations and some full text indexing will not function correctly";
                 testResult.remedy              = "Install OpenOffice v" + MINIMUM_OPEN_OFFICE_VERSION_STR + " or greater";
-                testResult.urisMoreInformation = OPEN_OFFICE_DOWNLOAD_URI;
+                testResult.urisMoreInformation = OPEN_OFFICE_DOWNLOAD_URIS;
             }
         }
         
         endTest(callback, testResult);
     }
-    
-    private BigDecimal parseOpenOfficeVersion(final String openOfficeHelpOutput)
-    {
-        BigDecimal result = null;
-
-        if (openOfficeHelpOutput.startsWith("OpenOffice.org "))
-        {
-            StringBuffer versionNumberStr = new StringBuffer(3);
-            int          index            = "OpenOffice.org ".length();
-            char         nextChar         = openOfficeHelpOutput.charAt(index);
-            
-            while (index + 1 < openOfficeHelpOutput.length() &&
-                   isDecimalChar(nextChar))
-            {
-                versionNumberStr.append(nextChar);
-                
-                index++;
-                nextChar = openOfficeHelpOutput.charAt(index);
-            }
-            
-            if (versionNumberStr.length() > 0)
-            {
-                try
-                {
-                    result = new BigDecimal(versionNumberStr.toString());
-                }
-                catch (NumberFormatException nfe)
-                {
-                    result = null;
-                }
-            }
-        }
-        
-        return(result);
-    }
-    
 
     
     private void validateImageMagick(final ValidatorCallback callback)
     {
-        String imageMagickHelpOutput = validateForkImageMagick(callback);
+        String imageMagickHelpOutput = validateCanForkImageMagick(callback);
         
         if (imageMagickHelpOutput != null)
         {
@@ -218,7 +195,7 @@ public class ThirdPartyApplicationValidator
     }
     
     
-    private String validateForkImageMagick(final ValidatorCallback callback)
+    private String validateCanForkImageMagick(final ValidatorCallback callback)
     {
         startTest(callback, "Can fork ImageMagick");
      
@@ -241,7 +218,7 @@ public class ThirdPartyApplicationValidator
             
             testResult.resultType = TestResult.PASS;
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             progress(callback, "no");
             
@@ -258,15 +235,18 @@ public class ThirdPartyApplicationValidator
         return(result);
     }
     
+    
     private void validateImageMagickVersion(final ValidatorCallback callback, final String imageMagickHelpOutput)
     {
         startTest(callback, "ImageMagick Version");
         
         TestResult testResult = new TestResult();
 
-        BigDecimal imageMagickVersion = parseImageMagickVersion(imageMagickHelpOutput);
+        Pair       parsedVersion = parseVersionString(IMAGE_MAGICK_VERSION_REGEX, imageMagickHelpOutput, 1, 2);
+        String     versionStr    = (String)parsedVersion.getFirst();
+        BigDecimal version       = (BigDecimal)parsedVersion.getSecond();
         
-        if (imageMagickVersion == null)
+        if (versionStr == null)
         {
             progress(callback, "unknown");
             
@@ -276,9 +256,9 @@ public class ThirdPartyApplicationValidator
         }
         else
         {
-            progress(callback, imageMagickVersion.toString());
+            progress(callback, versionStr);
             
-            if (MINIMUM_IMAGE_MAGICK_VERSION.compareTo(imageMagickVersion) <= 0)
+            if (version != null && MINIMUM_IMAGE_MAGICK_VERSION.compareTo(version) <= 0)
             {
                 testResult.resultType = TestResult.PASS;
             }
@@ -288,7 +268,7 @@ public class ThirdPartyApplicationValidator
                 testResult.errorMessage        = "Alfresco requires ImageMagick v" + MINIMUM_IMAGE_MAGICK_VERSION_STR + " or greater";
                 testResult.ramification        = "While Alfresco will start correctly, various image transformations may not function correctly";
                 testResult.remedy              = "Install ImageMagick v" + MINIMUM_IMAGE_MAGICK_VERSION_STR + " or greater";
-                testResult.urisMoreInformation = IMAGE_MAGICK_DOWNLOAD_URI;
+                testResult.urisMoreInformation = IMAGE_MAGICK_DOWNLOAD_URIS;
             }
         }
         
@@ -296,65 +276,32 @@ public class ThirdPartyApplicationValidator
     }
     
     
-    private BigDecimal parseImageMagickVersion(final String imageMagickHelpOutput)
+    private void validateSwfTools(final ValidatorCallback callback)
     {
-        BigDecimal result = null;
-
-        if (imageMagickHelpOutput.startsWith("Version: ImageMagick "))
-        {
-            StringBuffer versionNumberStr = new StringBuffer(3);
-            int          index            = "Version: ImageMagick ".length();
-            char         nextChar         = imageMagickHelpOutput.charAt(index);
-            int          decimalCount     = 0;
-            
-            while (index + 1 < imageMagickHelpOutput.length() &&
-                   isDecimalChar(nextChar) && decimalCount < 2)
-            {
-                versionNumberStr.append(nextChar);
-                
-                index++;
-                nextChar = imageMagickHelpOutput.charAt(index);
-                
-                if (nextChar == '.')
-                {
-                    decimalCount++;
-                }
-            }
-            
-            if (versionNumberStr.length() > 0)
-            {
-                try
-                {
-                    result = new BigDecimal(versionNumberStr.toString());
-                }
-                catch (NumberFormatException nfe)
-                {
-                    result = null;
-                }
-            }
-        }
+        String pdf2SwfOutput = validateCanForkSwfTools(callback);
         
-        return(result);
+        if (pdf2SwfOutput != null)
+        {
+            validateSwfToolsVersion(callback, pdf2SwfOutput);
+        }
     }
     
     
-    private void validateSwfTools(final ValidatorCallback callback)
+    private String validateCanForkSwfTools(final ValidatorCallback callback)
     {
         startTest(callback, "Can fork pdf2swf");
         
-        TestResult testResult        = new TestResult();
-        String     pdf2swfHelpOutput = null;
+        TestResult testResult = new TestResult();
+        String     result     = null;
         
         try
         {
-            pdf2swfHelpOutput = executeCommandAndGrabStdout(OS_COMMAND_PDF2SWF);
-
-            // No easy way to determine the version of pdf2swf, so if we got this far just register a success
-            progress(callback, "yes");
+            result = executeCommandAndGrabStdout(OS_COMMAND_PDF2SWF);
             
+            progress(callback, "yes");
             testResult.resultType = TestResult.PASS;
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             progress(callback, "no");
             
@@ -362,13 +309,89 @@ public class ThirdPartyApplicationValidator
             testResult.errorMessage        = "Unable to fork pdf2swf executable";
             testResult.ramification        = "Various document format transformations will be unavailable";
             testResult.remedy              = "Install SWFTools and either ensure it is in the PATH or configure Alfresco to point to the fully qualified path of the 'pdf2swf' executable";
-            testResult.urisMoreInformation = PDF2SWF_DOWNLOAD_URI_AND_ALFRESCO_IM_DOCS;
+            testResult.urisMoreInformation = PDF2SWF_DOWNLOAD_URI_AND_ALFRESCO_SWFTOOLS_DOCS;
             testResult.rootCause           = e;
         }
         
         endTest(callback, testResult);
+        
+        return(result);
     }
     
     
+    private void validateSwfToolsVersion(final ValidatorCallback callback, final String pdf2SwfOutput)
+    {
+        startTest(callback, "pdf2swf Version");
+        
+        TestResult testResult = new TestResult();
+        
+        Pair       parsedVersion = parseVersionString(PDF2SWF_VERSION_REGEX, pdf2SwfOutput, 1, 2);
+        String     versionStr    = (String)parsedVersion.getFirst();
+        BigDecimal version       = (BigDecimal)parsedVersion.getSecond();
+        
+        if (versionStr == null)
+        {
+            progress(callback, "unknown");
+            
+            testResult.resultType   = TestResult.WARN;
+            testResult.errorMessage = "Unable to determine pdf2swf version";
+            testResult.remedy       = "Manually validate that pdf2swf v" + MINIMUM_PDF2SWF_VERSION_STR + " or greater is installed by running the 'pdf2swf -V' command";
+        }
+        else
+        {
+            progress(callback, versionStr);
+            
+            if (version != null && MINIMUM_PDF2SWF_VERSION.compareTo(version) <= 0)
+            {
+                testResult.resultType = TestResult.PASS;
+            }
+            else
+            {
+                testResult.resultType          = TestResult.FAIL;
+                testResult.errorMessage        = "Alfresco requires pdf2swf v" + MINIMUM_PDF2SWF_VERSION_STR + " or greater";
+                testResult.ramification        = "While Alfresco will start correctly, Share document previews and various transformations will not function correctly";
+                testResult.remedy              = "Install pdf2swf v" + MINIMUM_PDF2SWF_VERSION_STR + " or greater";
+                testResult.urisMoreInformation = PDF2SWF_DOWNLOAD_URIS;
+            }
+        }
+        
+        endTest(callback, testResult);
+    }
+
+    
+    private Pair parseVersionString(final Pattern regex,
+                                    final String  programOutput,
+                                    final int     versionStrGroupNo,
+                                    final int     versionDecGroupNo)
+    {
+        Pair       result     = null;
+        String     versionStr = null;
+        BigDecimal version    = null;
+        
+        Matcher matcher = regex.matcher(programOutput);
+        
+        if (matcher.find())
+        {
+            versionStr = matcher.group(versionStrGroupNo);
+            
+            String versionDecStr = matcher.group(versionDecGroupNo);
+            
+            if (versionDecStr != null)
+            {
+                try
+                {
+                    version = new BigDecimal(matcher.group(versionDecGroupNo));
+                }
+                catch (final NumberFormatException nfe)
+                {
+                    version = null;
+                }
+            }
+        }
+        
+        result = new Pair(versionStr, version);
+        
+        return(result);
+    }
     
 }

@@ -382,7 +382,7 @@ public class OSValidator
             {
                 resourceLimit = sigar.getResourceLimit();
             }
-            catch (SigarException se)
+            catch (final SigarException se)
             {
                 // Ignore it and move on
             }
@@ -469,7 +469,7 @@ public class OSValidator
                 }
             }
         }
-        catch (IOException ioe)
+        catch (final IOException ioe)
         {
             // Ignore it and move on
         }
@@ -519,7 +519,7 @@ public class OSValidator
                 }
             }
         }
-        catch (IOException ioe)
+        catch (final IOException ioe)
         {
             // Ignore it and move on
         }
@@ -542,11 +542,11 @@ public class OSValidator
                 result = new Pair(lsbDistro.trim(), (lsbVersion == null || lsbVersion.trim().length() == 0) ? null : lsbVersion.trim());
             }
         }
-        catch (IOException ioe)
+        catch (final IOException ioe)
         {
             // Ignore it and move on
         }
-        catch (InterruptedException ie)
+        catch (final InterruptedException ie)
         {
             // Ignore it and move on
         }
