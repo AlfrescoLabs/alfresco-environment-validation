@@ -13,7 +13,7 @@ more common environmental problems Alfresco has seen. Administrators intending
 to install Alfresco should ensure they have fully validated that their
 environment is on the Alfresco Supported Stack. They should also ensure they
 have reviewed, understood and applied the various installation related
-information available from the Alfresco Network, the Alfresco Wiki and
+information available from the Alfresco Support Portal, the Alfresco Wiki and
 official product documentation.
 
 After completing environment validation, but prior to installation,
