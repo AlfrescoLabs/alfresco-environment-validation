@@ -92,19 +92,22 @@ from http://code.google.com/p/alfresco-environment-validation/source/checkout
 
 Release History
 ---------------
-v0.11 NOT YET RELEASED
+v0.11 NOT YET RELEASED - Alfresco 3.4
      Fixed issue #9: PostgreSQL: add test to ensure implicit int -> boolean typecasts are enabled
      Fixed issue #10: Update README to clarify that the tool must be run as the OS user that will run Alfresco
      Fixed issue #11: MySQL: Test "wait_timeout" system variable, and issue warning if it's below a specific threshold
+     Fixed issue #12: Update DB2 version checks to ensure 9.7 fixpack 3+ is installed
+     Fixed issue #13: Prepare version for Alfresco 3.4.x
      Fixed issue #15: Add check for pdf2swf version
      Fixed issue #19: Replace handcoded 3rd party application version parsing code with regexes
+     Fixed issue #20: JVM patchlevel not being checked
 
-v0.10 released 2011-01-14
+v0.10 released 2011-01-14 - Alfresco 3.3
      Fixed issue #1: Minimum supported JDK version is 1.6.0_21
      Fixed issue #5: Check innodb_autoinc_lock_mode=2 on MySQL
      Fixed issue #6: Only Windows 2003 32 bit is supported
      Fixed issue #7: Only Windows 2008 64 bit is supported
      Fixed issue #8: RHEL detection code is incorrectly reporting distro as SUSE
 
-v0.9 Released 2010-12-20
+v0.9 Released 2010-12-20 - Alfresco 3.3
      First public release

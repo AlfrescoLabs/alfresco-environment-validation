@@ -58,21 +58,22 @@ public class OSValidator
     private final static String OS_NAME_WINDOWS_SERVER_2003 = "Windows 2003";
     private final static String OS_NAME_WINDOWS_SERVER_2008 = "Windows Server 2008";
     private final static String OS_VERSION_SOLARIS_10       = "5.10";
-    private final static String OS_VERSION_RHEL_5           = "5";
+    private final static String OS_VERSION_RHEL_5_5         = "5.5";
     private final static String OS_VERSION_SUSE_11          = "11";
     private final static String OS_VERSION_UBUNTU_10_04     = "10.04";
     
     // Linux distribution detection
-    private final static String   FILE_NAME_RHEL_INFORMATION     = "/etc/redhat-release";
-    private final static String   RHEL_DISTRIBUTION_NAME_PREFIX  = "Red Hat Enterprise Linux";
-    private final static String   RHEL5_DISTRIBUTION_NAME_PREFIX = RHEL_DISTRIBUTION_NAME_PREFIX + " Server release 5";
-    private final static String[] OS_COMMAND_LSB_DISTRO          = { "lsb_release", "-si" };
-    private final static String[] OS_COMMAND_LSB_VERSION         = { "lsb_release", "-sr" };
-    private final static String   DISTRO_NAME_RHEL               = "RHEL";
-    private final static String   DISTRO_NAME_SUSE               = "SuSE";
-    private final static String   DISTRO_NAME_UBUNTU             = "Ubuntu";
-    private final static String   FILE_NAME_SUSE_INFORMATION     = "/etc/SuSE-release";
-    private final static String   SUSE_DISTRIBUTION_NAME_PREFIX  = "SUSE Linux Enterprise Server";
+    private final static String   FILE_NAME_RHEL_INFORMATION       = "/etc/redhat-release";
+    private final static String   RHEL_DISTRIBUTION_NAME_PREFIX    = "Red Hat Enterprise Linux";
+    private final static String   RHEL5_5_DISTRIBUTION_NAME_PREFIX = RHEL_DISTRIBUTION_NAME_PREFIX + " Server release 5.5";
+    private final static Pattern  RHEL_VERSION_REGEX               = Pattern.compile("Red Hat Enterprise Linux Server release ([0-9]+\\.[0-9]+)");
+    private final static String[] OS_COMMAND_LSB_DISTRO            = { "lsb_release", "-si" };
+    private final static String[] OS_COMMAND_LSB_VERSION           = { "lsb_release", "-sr" };
+    private final static String   DISTRO_NAME_RHEL                 = "RHEL";
+    private final static String   DISTRO_NAME_SUSE                 = "SuSE";
+    private final static String   DISTRO_NAME_UBUNTU               = "Ubuntu";
+    private final static String   FILE_NAME_SUSE_INFORMATION       = "/etc/SuSE-release";
+    private final static String   SUSE_DISTRIBUTION_NAME_PREFIX    = "SUSE Linux Enterprise Server";
     
     // File descriptors
     private final static int MINIMUM_FILE_DESCRIPTORS = 4096;
@@ -195,7 +196,7 @@ public class OSValidator
         
             if (DISTRO_NAME_RHEL.equals(distribution))
             {
-                if (OS_VERSION_RHEL_5.equals(version))
+                if (OS_VERSION_RHEL_5_5.equals(version))
                 {
                     testResult.resultType = TestResult.PASS;
                 }
@@ -204,7 +205,7 @@ public class OSValidator
                     testResult.resultType          = TestResult.WARN;
                     testResult.errorMessage        = "Unsupported RHEL version";
                     testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
-                    testResult.remedy              = "Install RHEL 5";
+                    testResult.remedy              = "Install RHEL " + OS_VERSION_RHEL_5_5;
                     testResult.urisMoreInformation = RHEL_URI;
                 }
             }
@@ -261,6 +262,7 @@ public class OSValidator
         endTest(callback, testResult);
     }
     
+    
     private final void validateSolaris(final ValidatorCallback callback)
     {
         startTest(callback, "Version");
@@ -285,6 +287,7 @@ public class OSValidator
         
         endTest(callback, testResult);
     }
+    
     
     private void validateArchitecture(final ValidatorCallback callback)
     {
@@ -328,6 +331,28 @@ public class OSValidator
                     testResult.remedy              = "Install a supported OS";
                     testResult.urisMoreInformation = ALFRESCO_SPM_URIS;
                 }
+                else if (OS_NAME_LINUX.equals(osName))
+                {
+                    Pair linuxDistribution = guessLinuxDistribution();  // Shame we have to guess the distro again - doing so isn't cheap...
+                    
+                    if (linuxDistribution != null &&
+                        DISTRO_NAME_RHEL.equals(linuxDistribution.getFirst()))
+                    {
+                        testResult.resultType          = TestResult.WARN;
+                        testResult.errorMessage        = "RHEL 32 bit is not supported";
+                        testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
+                        testResult.remedy              = "Install a supported OS";
+                        testResult.urisMoreInformation = ALFRESCO_SPM_URIS;
+                    }
+                    else
+                    {
+                        testResult.resultType          = TestResult.INFO;
+                        testResult.errorMessage        = "32 bit operating system detected";
+                        testResult.ramification        = "32 bit architectures have inherent scalability limitations.  Alfresco will function correctly but for high-scale instances, a 64 bit architecture is recommended";
+                        testResult.remedy              = "Consider installing a supported 64 bit operating system";
+                        testResult.urisMoreInformation = ALFRESCO_SPM_URIS;
+                    }
+                }
                 else
                 {
                     testResult.resultType          = TestResult.INFO;
@@ -368,6 +393,7 @@ public class OSValidator
 
         endTest(callback, testResult);
     }
+    
     
     private void validateFileDescriptorLimit(final ValidatorCallback callback)
     {
@@ -454,9 +480,11 @@ public class OSValidator
             {
                 if (redhatRelease.startsWith(RHEL_DISTRIBUTION_NAME_PREFIX))
                 {
-                    if (redhatRelease.startsWith(RHEL5_DISTRIBUTION_NAME_PREFIX))
+                    Matcher matcher = RHEL_VERSION_REGEX.matcher(redhatRelease);
+                    
+                    if (matcher.find())
                     {
-                        result = new Pair(DISTRO_NAME_RHEL, OS_VERSION_RHEL_5);
+                        result = new Pair(DISTRO_NAME_RHEL, matcher.group(1));
                     }
                     else
                     {

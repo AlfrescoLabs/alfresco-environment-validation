@@ -28,6 +28,8 @@ package org.alfresco.extension.environment.validation.validators;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.alfresco.extension.environment.validation.AbstractValidator;
 import org.alfresco.extension.environment.validation.TestResult;
@@ -56,9 +58,10 @@ public class JVMValidator
     private final static String JVM_VENDOR_IBM   = "IBM Corporation";
     private final static String JVM_VENDOR_APPLE = "Apple Inc.";
     
-    private final static String JVM_VERSION_15                    = "1.5";
-    private final static String JVM_VERSION_16                    = "1.6";
-    private final static int    JVM_VERSION_16_MINIMUM_PATCHLEVEL = 22;
+    private final static String  JVM_VERSION_15                    = "1.5";
+    private final static String  JVM_VERSION_16                    = "1.6";
+    private final static int     JVM_VERSION_16_MINIMUM_PATCHLEVEL = 22;
+    private final static Pattern JVM_PATCHLEVEL_REGEX              = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)_([0-9]+)");
     
     private final static String   JAVA_DOWNLOAD_URI_STR               = "http://www.oracle.com/technetwork/java/javase/downloads/index.html";
     private final static String[] JAVA_DOWNLOAD_URI                   = { JAVA_DOWNLOAD_URI_STR };
@@ -168,22 +171,18 @@ public class JVMValidator
             {
                 String jvmVendor = System.getProperty(SYSTEM_PROPERTY_JVM_VENDOR);
                 
-                if (!JVM_VENDOR_SUN.equals(jvmVendor) || !JVM_VENDOR_APPLE.equals(jvmVendor))
+                if (JVM_VENDOR_SUN.equals(jvmVendor) || JVM_VENDOR_APPLE.equals(jvmVendor))
                 {
-                    // It's not a Sun or Apple JVM, so we can't validate the patchlevel
-                    testResult.resultType = TestResult.PASS;
-                }
-                else
-                {
-                    String[] jvmVersionComponents = jvmVersion.split("\\_");
+                    Matcher matcher = JVM_PATCHLEVEL_REGEX.matcher(jvmVersion);
                     
-                    if (jvmVersionComponents != null && jvmVersionComponents.length >= 2)
+                    if (matcher.find())
                     {
-                        int jvmPatchLevel = -1;
+                        String jvmPatchLevelStr = matcher.group(4);
+                        int    jvmPatchLevel    = -1;
                         
                         try
                         {
-                            jvmPatchLevel = Integer.parseInt(jvmVersionComponents[1]);
+                            jvmPatchLevel = Integer.parseInt(jvmPatchLevelStr);
                             
                             if (jvmPatchLevel >= JVM_VERSION_16_MINIMUM_PATCHLEVEL)
                             {
@@ -192,7 +191,7 @@ public class JVMValidator
                             else
                             {
                                 testResult.resultType          = TestResult.WARN;
-                                testResult.errorMessage        = "Alfresco requires patchlevel " + JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
+                                testResult.errorMessage        = "Alfresco requires a 1.6 JVM, patchlevel " + JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
                                 testResult.ramification        = "Alfresco functions sufficiently well for development purposes but must not be used for production";
                                 testResult.remedy              = "Install a supported 1.6 JVM, patchlevel " + JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
                                 testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
@@ -203,7 +202,7 @@ public class JVMValidator
                         {
                             testResult.resultType          = TestResult.WARN;
                             testResult.errorMessage        = "Unrecognised JVM patchlevel: " + jvmPatchLevel;
-                            testResult.ramification        = "Please manually validate that patchlevel " + JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher is installed";
+                            testResult.ramification        = "Please manually validate that a 1.6 JVM, patchlevel " + JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher is installed";
                             testResult.remedy              = "Install a supported 1.6 JVM, patchlevel " + JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
                             testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
                         }
@@ -216,6 +215,11 @@ public class JVMValidator
                         testResult.remedy              = "Install a 1.6 JVM, patchlevel " + JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
                         testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
                     }
+                }
+                else
+                {
+                    // It's not a Sun or Apple JVM, so we can't validate the patchlevel
+                    testResult.resultType = TestResult.PASS;
                 }
             }
             else if (JVM_VERSION_15.equals(jvmVersion))

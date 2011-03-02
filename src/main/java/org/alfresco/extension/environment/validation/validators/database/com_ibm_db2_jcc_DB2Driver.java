@@ -45,18 +45,14 @@ public class com_ibm_db2_jcc_DB2Driver
 {
     // Supported DB2 version
     // See http://www-01.ibm.com/support/docview.wss?rs=71&uid=swg21363866 for a list of JDBC driver versions
-    private final static ComparablePair[] SUPPORTED_JDBC_DRIVER_VERSION   = { new ComparablePair(new Integer(3), new Integer(57)),   // DB2 9.7 GA
-                                                                              new ComparablePair(new Integer(3), new Integer(58)),   // DB2 9.7 FP1
-                                                                              new ComparablePair(new Integer(3), new Integer(59)),   // DB2 9.7 FP2
-                                                                              new ComparablePair(new Integer(3), new Integer(60)),   // DB2 9.7 FP3??
-                                                                              new ComparablePair(new Integer(3), new Integer(61)) }; // DB2 9.7 FP4??
-    private final static String           SUPPORTED_DB2_VERSION           = "9.7";
-    private final static String           SUPPORTED_DB2_VERSION_SIGNATURE = SUPPORTED_DB2_VERSION + ".";
+    private final static ComparablePair[] SUPPORTED_JDBC_DRIVER_VERSIONS = { new ComparablePair(new Integer(3), new Integer(61)) };   // DB2 9.7 FP3 and FP3a
+    // See https://www-304.ibm.com/support/docview.wss?rs=71&uid=swg27007053 for a list of server version strings 
+    private final static String           SUPPORTED_DB2_VERSION          = "9.7.0.3";
     
     // "More information" URIs
     private final static String[] DB2_URI                            = { "http://www-01.ibm.com/software/data/db2/linux-unix-windows/download.html" };
     private final static String[] JDBC_URI                           = DB2_URI;
-    private final static String[] DB2_CONFIGURING_CHARACTER_SETS_URI = { /* ####TODO!!!! */ };
+    private final static String[] DB2_CONFIGURING_CHARACTER_SETS_URI = { "http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.admin.nls.doc/doc/c0004846.html" };
 
     
     /**
@@ -64,7 +60,7 @@ public class com_ibm_db2_jcc_DB2Driver
      */
     public void validate(final ValidatorCallback callback, final Connection con)
     {
-        validateJdbcDriverVersion(callback, con, SUPPORTED_JDBC_DRIVER_VERSION, JDBC_URI);
+        validateJdbcDriverVersion(callback, con, SUPPORTED_JDBC_DRIVER_VERSIONS, JDBC_URI);
         validateDatabaseVersion(callback, con);
         validateEncoding(callback, con);
     }
@@ -97,7 +93,7 @@ public class com_ibm_db2_jcc_DB2Driver
                     
                     progress(callback, version);
                     
-                    if (version.startsWith(SUPPORTED_DB2_VERSION_SIGNATURE))
+                    if (version.startsWith(SUPPORTED_DB2_VERSION))
                     {
                         testResult.resultType = TestResult.PASS;
                     }
@@ -130,7 +126,7 @@ public class com_ibm_db2_jcc_DB2Driver
                 testResult.remedy       = "Manually validate that DB2 " + SUPPORTED_DB2_VERSION + " is installed";
             }
         }
-        catch (SQLException se)
+        catch (final SQLException se)
         {
             progress(callback, "unknown");
             
@@ -196,7 +192,7 @@ public class com_ibm_db2_jcc_DB2Driver
                 testResult.remedy       = "Manually validate that the database character encoding is 'UTF-8'";
             }
         }
-        catch (SQLException se)
+        catch (final SQLException se)
         {
             progress(callback, "unknown");
             

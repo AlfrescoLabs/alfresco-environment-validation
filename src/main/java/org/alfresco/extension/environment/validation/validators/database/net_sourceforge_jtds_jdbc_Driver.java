@@ -46,7 +46,7 @@ public class net_sourceforge_jtds_jdbc_Driver
 {
     // SQL Server product versions
     private final static ComparablePair[] SUPPORTED_JDBC_DRIVER_VERSION = { new ComparablePair(new Integer(1), new Integer(2)) };
-    private final static String           MS_SQL_SERVER_2008            = "10.";
+    private final static String           MS_SQL_SERVER_2008_R2         = "10.50.";
 
     
     // "More information" URIs
@@ -86,9 +86,9 @@ public class net_sourceforge_jtds_jdbc_Driver
                 
                 if (version != null && version.trim().length() > 0)
                 {
-                    if (version.startsWith(MS_SQL_SERVER_2008))
+                    if (version.startsWith(MS_SQL_SERVER_2008_R2))
                     {
-                        progress(callback, "2008");
+                        progress(callback, "2008R2");
                         testResult.resultType = TestResult.PASS;
                     }
                     else
@@ -98,7 +98,7 @@ public class net_sourceforge_jtds_jdbc_Driver
                         testResult.resultType          = TestResult.FAIL;
                         testResult.errorMessage        = "Unsupported MS SQL Server version";
                         testResult.ramification        = "Alfresco will not function correctly on this version";
-                        testResult.remedy              = "Install MS SQL Server 2005 or 2008";
+                        testResult.remedy              = "Install MS SQL Server 2008 R2";
                         testResult.urisMoreInformation = ALFRESCO_SPM_AND_MS_SQL_SERVER_URIS;
                     }
                 }
@@ -109,7 +109,7 @@ public class net_sourceforge_jtds_jdbc_Driver
                     testResult.resultType   = TestResult.FAIL;
                     testResult.errorMessage = "Unable to determine MS SQL Server version";
                     testResult.ramification = "Alfresco may not function correctly";
-                    testResult.remedy       = "Install MS SQL Server 2005 or 2008";
+                    testResult.remedy       = "Install MS SQL Server 2008 R2";
                 }
             }
             else
@@ -119,17 +119,17 @@ public class net_sourceforge_jtds_jdbc_Driver
                 testResult.resultType   = TestResult.FAIL;
                 testResult.errorMessage = "Unable to determine MS SQL Server version";
                 testResult.ramification = "Alfresco may not function correctly";
-                testResult.remedy       = "Install MS SQL Server 2005 or 2008";
+                testResult.remedy       = "Install MS SQL Server 2008 R2";
             }
         }
-        catch (SQLException se)
+        catch (final SQLException se)
         {
             progress(callback, "unknown");
             
             testResult.resultType   = TestResult.FAIL;
             testResult.errorMessage = "Unable to determine MS SQL Server version";
             testResult.ramification = "Alfresco may not function correctly";
-            testResult.remedy       = "Manually validate that MS SQL Server 2005 or 2008 is installed";
+            testResult.remedy       = "Manually validate that MS SQL Server 2008 R2 is installed";
             testResult.rootCause    = se;
         }
         
@@ -167,7 +167,7 @@ public class net_sourceforge_jtds_jdbc_Driver
                         testResult.resultType          = TestResult.WARN;
                         testResult.errorMessage        = "Unsupported MS SQL Server edition";
                         testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
-                        testResult.remedy              = "Install MS SQL Server 2005 or 2008, Standard, Small Business, Enterprise or Data Center Edition";
+                        testResult.remedy              = "Install MS SQL Server 2008 R2, Standard, Small Business, Enterprise or Data Center Edition";
                         testResult.urisMoreInformation = ALFRESCO_SPM_AND_MS_SQL_SERVER_URIS;
                     }
                 }
@@ -186,17 +186,17 @@ public class net_sourceforge_jtds_jdbc_Driver
                 progress(callback, "unknown");
                 
                 testResult.resultType   = TestResult.FAIL;
-                testResult.errorMessage = "Unable to determine MS SQL Server version";
+                testResult.errorMessage = "Unable to determine MS SQL Server edition";
                 testResult.ramification = "Alfresco may not function correctly";
                 testResult.remedy       = "Manually validate that the MS SQL Server is Standard, Small Business, Enterprise or Data Center Edition";
             }
         }
-        catch (SQLException se)
+        catch (final SQLException se)
         {
             progress(callback, "unknown");
             
             testResult.resultType   = TestResult.FAIL;
-            testResult.errorMessage = "Unable to determine MS SQL Server version";
+            testResult.errorMessage = "Unable to determine MS SQL Server edition";
             testResult.ramification = "Alfresco may not function correctly";
             testResult.remedy       = "Manually validate that the MS SQL Server is Standard, Small Business, Enterprise or Data Center Edition";
             testResult.rootCause    = se;
@@ -274,7 +274,7 @@ public class net_sourceforge_jtds_jdbc_Driver
                 testResult.urisMoreInformation = SNAPSHOT_ISOLATION_URIS;
             }
         }
-        catch (SQLException se)
+        catch (final SQLException se)
         {
             progress(callback, "unknown");
             
