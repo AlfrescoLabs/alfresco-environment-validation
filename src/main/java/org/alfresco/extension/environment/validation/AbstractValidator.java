@@ -55,9 +55,9 @@ public abstract class AbstractValidator
 {
     // Handy "more information" URIs
     public final static String   ALFRESCO_SUMMARY_SPM_URI_STR  = "http://www.alfresco.com/services/support/stacks/";
-    public final static String   ALFRESCO_DETAILED_SPM_URI_STR = "https://network.alfresco.com/?f=default&o=workspace://SpacesStore/4defa351-68cb-4491-9f23-46fb861ddd05";
+    public final static String   ALFRESCO_DETAILED_SPM_URI_STR = "http://www.alfresco.com/services/subscription/supported-platforms/4-x.pdf";
     public final static String[] ALFRESCO_SPM_URIS             = { ALFRESCO_SUMMARY_SPM_URI_STR, ALFRESCO_DETAILED_SPM_URI_STR };
-    public final static String[] ALFRESCO_NETWORK_URI          = { "http://network.alfresco.com/" };
+    public final static String[] ALFRESCO_NETWORK_URI          = { "http://support.alfresco.com/" };
     
     // OS Names
     protected final static String SYSTEM_PROPERTY_OS_NAME = "os.name";

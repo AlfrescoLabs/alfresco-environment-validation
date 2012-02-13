@@ -55,17 +55,17 @@ public class OSValidator
     private final static String SYSTEM_PROPERTY_OS_VERSION = "os.version";
 
     // OS versions
-    private final static String OS_NAME_WINDOWS_SERVER_2003 = "Windows 2003";
     private final static String OS_NAME_WINDOWS_SERVER_2008 = "Windows Server 2008";
     private final static String OS_VERSION_SOLARIS_10       = "5.10";
     private final static String OS_VERSION_RHEL_5_5         = "5.5";
+    private final static String OS_VERSION_RHEL_6_1         = "6.1";
     private final static String OS_VERSION_SUSE_11          = "11";
     private final static String OS_VERSION_UBUNTU_10_04     = "10.04";
     
     // Linux distribution detection
     private final static String   FILE_NAME_RHEL_INFORMATION       = "/etc/redhat-release";
     private final static String   RHEL_DISTRIBUTION_NAME_PREFIX    = "Red Hat Enterprise Linux";
-    private final static String   RHEL5_5_DISTRIBUTION_NAME_PREFIX = RHEL_DISTRIBUTION_NAME_PREFIX + " Server release 5.5";
+//    private final static String   RHEL5_5_DISTRIBUTION_NAME_PREFIX = RHEL_DISTRIBUTION_NAME_PREFIX + " Server release 5.5";
     private final static Pattern  RHEL_VERSION_REGEX               = Pattern.compile("Red Hat Enterprise Linux Server release ([0-9]+\\.[0-9]+)");
     private final static String[] OS_COMMAND_LSB_DISTRO            = { "lsb_release", "-si" };
     private final static String[] OS_COMMAND_LSB_VERSION           = { "lsb_release", "-sr" };
@@ -141,8 +141,7 @@ public class OSValidator
             }
             else if (osName.startsWith(OS_NAME_PREFIX_WINDOWS))
             {
-                if (OS_NAME_WINDOWS_SERVER_2003.equals(osName) ||
-                    OS_NAME_WINDOWS_SERVER_2008.equals(osName))
+                if (OS_NAME_WINDOWS_SERVER_2008.equals(osName))
                 {
                     testResult.resultType = TestResult.PASS;
                 }
@@ -196,7 +195,7 @@ public class OSValidator
         
             if (DISTRO_NAME_RHEL.equals(distribution))
             {
-                if (OS_VERSION_RHEL_5_5.equals(version))
+                if ((OS_VERSION_RHEL_5_5.equals(version)) || (OS_VERSION_RHEL_6_1.equals(version)))
                 {
                     testResult.resultType = TestResult.PASS;
                 }
@@ -205,7 +204,7 @@ public class OSValidator
                     testResult.resultType          = TestResult.WARN;
                     testResult.errorMessage        = "Unsupported RHEL version";
                     testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
-                    testResult.remedy              = "Install RHEL " + OS_VERSION_RHEL_5_5;
+                    testResult.remedy              = "Install RHEL " + OS_VERSION_RHEL_5_5 + " or " + OS_VERSION_RHEL_6_1;
                     testResult.urisMoreInformation = RHEL_URI;
                 }
             }
@@ -304,20 +303,7 @@ public class OSValidator
             
             if ("64".equals(dataModel))
             {
-                progress(callback, dataModel + " bit");
-                
-                if (OS_NAME_WINDOWS_SERVER_2003.equals(osName))   // Windows 2003 64 bit is not supported
-                {
-                    testResult.resultType          = TestResult.WARN;
-                    testResult.errorMessage        = "Windows 2003 64 bit is not supported";
-                    testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
-                    testResult.remedy              = "Install a supported OS";
-                    testResult.urisMoreInformation = ALFRESCO_SPM_URIS;
-                }
-                else
-                {
-                    testResult.resultType = TestResult.PASS;
-                }
+            	testResult.resultType = TestResult.PASS;
             }
             else if ("32".equals(dataModel))
             {

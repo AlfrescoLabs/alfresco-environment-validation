@@ -48,7 +48,7 @@ public class oracle_jdbc_OracleDriver
     // Supported Oracle versions
     private final static ComparablePair[] SUPPORTED_JDBC_DRIVER_VERSION = { new ComparablePair(new Integer(11), new Integer(2)) };
     private final static String           ORACLE_10_2                   = "10.2";
-    private final static String           ORACLE_10_2_0_4               = ORACLE_10_2 + ".0.4";
+    private final static String           ORACLE_10_2_0_5               = ORACLE_10_2 + ".0.5";
     private final static String           ORACLE_11_2                   = "11.2";
     private final static String           ORACLE_11_2_0_1_0             = ORACLE_11_2 + ".0.1.0";
     
@@ -101,7 +101,7 @@ public class oracle_jdbc_OracleDriver
                             
                             if (version.startsWith(ORACLE_10_2))
                             {
-                                if (version.startsWith(ORACLE_10_2_0_4))
+                                if (version.startsWith(ORACLE_10_2_0_5))
                                 {
                                     testResult.resultType = TestResult.PASS;
                                 }
@@ -110,31 +110,33 @@ public class oracle_jdbc_OracleDriver
                                     testResult.resultType          = TestResult.WARN;
                                     testResult.errorMessage        = "Unsupported Oracle 10g version";
                                     testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
-                                    testResult.remedy              = "Install Oracle v" + ORACLE_10_2_0_4;
+                                    testResult.remedy              = "Install Oracle v" + ORACLE_10_2_0_5;
                                     testResult.urisMoreInformation = ALFRESCO_SPM_AND_ORACLE_URIS;
                                 }
                             }
                             else if (version.startsWith(ORACLE_11_2))
                             {
-                                if (version.startsWith(ORACLE_11_2_0_1_0))
-                                {
-                                    testResult.resultType = TestResult.PASS;
-                                }
-                                else
-                                {
+//                                if (version.startsWith(ORACLE_11_2_0_1_0))
+//                                {
+//                                    testResult.resultType = TestResult.PASS;
+//                                }
+//                                else
+//                                {
                                     testResult.resultType          = TestResult.WARN;
-                                    testResult.errorMessage        = "Unsupported Oracle 11g version";
+                                    testResult.errorMessage        = "Unsupported Oracle version - " + ORACLE_11_2_0_1_0 + " will be supported in Alfresco 4.0.1";
                                     testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
-                                    testResult.remedy              = "Install Oracle v" + ORACLE_11_2_0_1_0;
+                                    testResult.remedy              = "Install Oracle v" + ORACLE_10_2_0_5;
                                     testResult.urisMoreInformation = ALFRESCO_SPM_AND_ORACLE_URIS;
-                                }
+//                                }
                             }
                             else
                             {
                                 testResult.resultType          = TestResult.FAIL;
                                 testResult.errorMessage        = "Unsupported Oracle version";
                                 testResult.ramification        = "Alfresco will not function correctly on this version";
-                                testResult.remedy              = "Install Oracle 10g (v" + ORACLE_10_2_0_4 + ") or 11g (v" + ORACLE_11_2_0_1_0 + ")";
+                                testResult.remedy              = "Install Oracle 10g (v" + ORACLE_10_2_0_5 + ")"; 
+                                // 11g unsupported in 4.0.0. Will be supported in 4.0.1
+                                //  or 11g (v" + ORACLE_11_2_0_1_0 + ")";
                                 testResult.urisMoreInformation = ALFRESCO_SPM_AND_ORACLE_URIS;
                             }
                         }
@@ -145,7 +147,9 @@ public class oracle_jdbc_OracleDriver
                             testResult.resultType   = TestResult.FAIL;
                             testResult.errorMessage = "Unable to determine Oracle version";
                             testResult.ramification = "Alfresco may not function correctly";
-                            testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_4 + ") or 11g (v" + ORACLE_11_2_0_1_0 + ") is installed";
+                            testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_5 + ") is installed";
+                            // 11g unsupported in 4.0.0. Will be supported in 4.0.1
+                            //  or 11g (v" + ORACLE_11_2_0_1_0 + ")
                         }
                     }
                     else
@@ -155,7 +159,9 @@ public class oracle_jdbc_OracleDriver
                         testResult.resultType   = TestResult.FAIL;
                         testResult.errorMessage = "Unable to determine Oracle version";
                         testResult.ramification = "Alfresco may not function correctly";
-                        testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_4 + ") or 11g (v" + ORACLE_11_2_0_1_0 + ") is installed";
+                        testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_5 + ") is installed";
+                        // 11g unsupported in 4.0.0. Will be supported in 4.0.1
+                        // or 11g (v" + ORACLE_11_2_0_1_0 + ")
                     }
                 }
                 else
@@ -165,7 +171,9 @@ public class oracle_jdbc_OracleDriver
                     testResult.resultType   = TestResult.FAIL;
                     testResult.errorMessage = "Unable to determine Oracle version";
                     testResult.ramification = "Alfresco may not function correctly";
-                    testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_4 + ") or 11g (v" + ORACLE_11_2_0_1_0 + ") is installed";
+                    testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_5 + ") is installed";
+                    // 11g unsupported in 4.0.0. Will be supported in 4.0.1
+                    // or 11g (v" + ORACLE_11_2_0_1_0 + ")
                 }
             }
             else
@@ -175,7 +183,10 @@ public class oracle_jdbc_OracleDriver
                 testResult.resultType   = TestResult.FAIL;
                 testResult.errorMessage = "Unable to determine Oracle version";
                 testResult.ramification = "Alfresco may not function correctly";
-                testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_4 + ") or 11g (v" + ORACLE_11_2_0_1_0 + ") is installed";
+                testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_5 + ") is installed";
+                // 11g unsupported in 4.0.0. Will be supported in 4.0.1
+                //or 11g (v" + ORACLE_11_2_0_1_0 + ")
+                
             }
         }
         catch (SQLException se)
@@ -185,8 +196,10 @@ public class oracle_jdbc_OracleDriver
             testResult.resultType   = TestResult.FAIL;
             testResult.errorMessage = "Unable to determine Oracle version";
             testResult.ramification = "Alfresco may not function correctly";
-            testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_4 + ") or 11g (v" + ORACLE_11_2_0_1_0 + ") is installed";
+            testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_5 + ") is installed";
             testResult.rootCause    = se;
+            // 11g unsupported in 4.0.0. Will be supported in 4.0.1
+            // or 11g (v" + ORACLE_11_2_0_1_0 + ") 
         }
         
         endTest(callback, testResult);
