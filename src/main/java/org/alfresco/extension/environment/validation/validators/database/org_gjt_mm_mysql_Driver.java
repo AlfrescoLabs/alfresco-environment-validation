@@ -59,7 +59,8 @@ public class org_gjt_mm_mysql_Driver
     private final static String[] MYSQL_CONFIGURING_IDENTIFIER_CASE_SENSITIVITY_URI = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/identifier-case-sensitivity.html" };
     private final static String[] MYSQL_AUTO_INCREMENT_LOCK_MODES_URI               = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/innodb-auto-increment-handling.html" };
     private final static String[] MYSQL_WAIT_TIMEOUT_URI                            = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/server-system-variables.html#sysvar_wait_timeout" };
-                         
+    private final static String[] MYSQL_LOCKS_UNSAFE_URI                            = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/innodb-parameters.html#sysvar_innodb_locks_unsafe_for_binlog" };
+
     /**
      * @see org.alfresco.extension.environment.validation.validators.database.DBSpecificValidator#validate(org.alfresco.extension.environment.validation.ValidatorCallback, java.sql.Connection)
      */
@@ -74,6 +75,7 @@ public class org_gjt_mm_mysql_Driver
         validateInnoDbAutoIncrementLockMode(callback, con);
         validateWaitTimeout(callback, con);
         validateEncoding(callback, con);
+        validateInnoDbLocksUnsafeForBinlogMode(callback, con);
     }
     
     
@@ -520,7 +522,6 @@ public class org_gjt_mm_mysql_Driver
         }
     }
 
-    
     private final void validateEncodingSetting(final ValidatorCallback callback, final String characterSetting, final String encoding)
     {
         String settingName = getSettingName(characterSetting);
@@ -577,7 +578,6 @@ public class org_gjt_mm_mysql_Driver
         
         endTest(callback, testResult);
     }
-    
     private final String getSettingName(final String characterSetting)
     {
         String result = characterSetting;
@@ -590,7 +590,71 @@ public class org_gjt_mm_mysql_Driver
         
         return(result);
     }
-    
+    private final void     validateInnoDbLocksUnsafeForBinlogMode(final ValidatorCallback callback, final Connection con)
+    {
+        try
+        {  
+            List encodings = query(con, "SHOW VARIABLES LIKE 'innodb_locks_unsafe_for_binlog'");
+            
+            for (int i = 0; i < encodings.size(); i++)
+            {
+                Map    row              = (Map)encodings.get(i);
+                String setting         = (String)row.get("VARIABLE_VALUE");  // MySQL 5.1
+                
+                if (setting == null || setting.trim().length() == 0)
+                {
+                    setting = (String)row.get("VALUE");  // MySQL 5.0
+                }
+
+                validateBinlogSetting(callback, setting);
+            }
+        }
+        catch (final SQLException se)
+        {
+            startTest(callback, "Unsafe for Binlog");
+            
+            TestResult testResult = new TestResult();
+            
+            progress(callback, "unknown");
+            
+            testResult.resultType   = TestResult.WARN;
+            testResult.errorMessage = "Unable to determine innodb_locks_unsafe_for_binlog setting";
+            testResult.ramification = "Alfresco may not function correctly";
+            testResult.remedy       = "Manually execute the SQL statement 'SHOW VARIABLES LIKE 'innodb_locks_unsafe_for_binlog';' " +
+                                      "and ensure that the values is 'ON'";
+            testResult.urisMoreInformation = MYSQL_LOCKS_UNSAFE_URI;
+            testResult.rootCause    = se;
+            
+            endTest(callback, testResult);
+        }
+    }
+    private final void validateBinlogSetting(final ValidatorCallback callback, final String setting)
+    {
+        startTest(callback, "Unsafe for binlog");
+        
+        TestResult testResult = new TestResult();
+        
+        if (setting != null && setting.trim().length() > 0)
+        {
+            progress(callback, setting);
+            
+            if ("ON".equalsIgnoreCase(setting))
+            {
+            	testResult.resultType = TestResult.PASS;
+            }
+            else
+            {
+                testResult.resultType          = TestResult.FAIL;
+                testResult.errorMessage        = "innodb_locks_unsafe_for_binlog should be set to ON";
+                testResult.ramification        = "Alfresco will not function correctly";
+                testResult.remedy              = "Correct the value of innodb_locks_unsafe_for_binlog and rerun this test";
+                testResult.urisMoreInformation = MYSQL_LOCKS_UNSAFE_URI;
+            }
+        }
+        endTest(callback, testResult);
+    }
+
+   
     
 
 }
