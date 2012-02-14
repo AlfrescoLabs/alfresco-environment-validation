@@ -48,7 +48,7 @@ public class ThirdPartyApplicationValidator
     private final static String VALIDATION_TOPIC = "3rd Party Apps";
     
     private final static String[]   OS_COMMAND_OPEN_OFFICE_UNIX     = { "soffice", "-headless", "-help" };   // Warning: doesn't terminate on Linux with OO 3.1
-    private final static String[]   OS_COMMAND_OPEN_OFFICE_WINDOWS  = { "soffice", "-help" };
+    private final static String[]   OS_COMMAND_OPEN_OFFICE_WINDOWS  = { "soffice", "-help" , "-headless"};
     private final static Pattern    OPEN_OFFICE_VERSION_REGEX       = Pattern.compile("OpenOffice\\.org ([0-9]+\\.[0-9]+)");
     private final static String     MINIMUM_OPEN_OFFICE_VERSION_STR = "3.2";    
     private final static BigDecimal MINIMUM_OPEN_OFFICE_VERSION     = new BigDecimal(MINIMUM_OPEN_OFFICE_VERSION_STR);
@@ -111,7 +111,14 @@ public class ThirdPartyApplicationValidator
         
         try
         {
-            result = executeCommandAndGrabStdout(openOfficeCommand);
+        	if (isWindows())
+            {
+            	result = executeCommandAndGrabStdout(openOfficeCommand);
+            }
+            else
+            {
+            	result = executeCommandAndGrabStderr(openOfficeCommand);
+            }
 
             // If the command was successfully executed but returned nothing, fake some output just to force the version validation to run
             if (result == null)
@@ -150,6 +157,7 @@ public class ThirdPartyApplicationValidator
         // NOTE: It appears that OpenOffice uses some weird scheme to write its help screen - a scheme that doesn't result in the output going to stdout.
         //       As a result we are unable to read that output and parse it - instead all we get are a series of blank lines.  In this case we issue a
         //       warning to manually check the version number, which is probably the best of a bad lot of options.
+        // UPDATE : On Linux it goes to stderr, but on Windows it disappears.... 
         Pair       parsedVersion = parseVersionString(OPEN_OFFICE_VERSION_REGEX, openOfficeHelpOutput, 1, 1);
         String     versionStr    = (String)parsedVersion.getFirst();
         BigDecimal version       = (BigDecimal)parsedVersion.getSecond();

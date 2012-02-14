@@ -125,6 +125,7 @@ public class JVMValidator
             if (JVM_VENDOR_SUN.equals(jvmVendor))
             {
             	// This covers both Sun and OpenJDK
+            	// TODO: Unsure how reliable java.runtime.name is as a differentiator between Sun and OpenJdk
             	String jvmRuntime = System.getProperty(SYSTEM_PROPERTY_JVM_RUNTIME);
             	if (jvmRuntime.equals(JVM_RUNTIME_OPENJDK))
             	{
@@ -331,10 +332,10 @@ public class JVMValidator
             {
                 progress(callback, jvmArchitecture + " bit");
                 
-                testResult.resultType          = TestResult.INFO;
+                testResult.resultType          = TestResult.WARN;
                 testResult.errorMessage        = "32 bit JVM detected";
-                testResult.ramification        = "32 bit architectures have inherent scalability limitations.  Alfresco will function correctly but for high-scale instances, a 64 bit architecture is recommended";
-                testResult.remedy              = "Consider installing a 64 bit JVM";
+                testResult.ramification        = "32 bit architectures have inherent scalability limitations. Alfresco may function sufficiently well for development purposes but must not be used for production";
+                testResult.remedy              = "Install a supported 64 bit JVM";
                 testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
             }
             else
@@ -345,7 +346,7 @@ public class JVMValidator
                 {
                     testResult.resultType          = TestResult.INFO;
                     testResult.errorMessage        = "Probable 32 bit JVM detected";
-                    testResult.ramification        = "32 bit architectures have inherent scalability limitations.  Alfresco will function correctly but for high-scale instances, a 64 bit architecture is recommended";
+                    testResult.ramification        = "32 bit architectures have inherent scalability limitations. Alfresco may function sufficiently well for development purposes but must not be used for production";
                     testResult.remedy              = "Manually validate the JVM architecture and consider installing a 64 bit JVM";
                     testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
                 }
@@ -354,7 +355,7 @@ public class JVMValidator
                     testResult.resultType          = TestResult.WARN;
                     testResult.errorMessage        = "Unable to determine JVM architecture";
                     testResult.ramification        = "Alfresco may not start, and if it does it may not function properly";
-                    testResult.remedy              = "Manually validate that the JVM architecture is 32 bit or (preferably) 64 bit";
+                    testResult.remedy              = "Manually validate that the JVM architecture 64 bit";
                     testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
                 }
             }
@@ -366,7 +367,7 @@ public class JVMValidator
             testResult.resultType          = TestResult.WARN;
             testResult.errorMessage        = "Unable to determine JVM architecture";
             testResult.ramification        = "Alfresco may not start, and if it does it may not function properly";
-            testResult.remedy              = "Manually validate that the JVM architecture is 32 bit or (preferably) 64 bit";
+            testResult.remedy              = "Manually validate that the JVM architecture 64 bit";
             testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
         }
         

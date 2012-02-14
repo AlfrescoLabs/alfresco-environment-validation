@@ -111,7 +111,7 @@ public class org_gjt_mm_mysql_Driver
                     
                     if (version.startsWith(SUPPORTED_MYSQL_VERSION_SIGNATURE))
                     {
-                        String[] versionComponents = version.split("\\.");
+                        String[] versionComponents = version.split("[\\.-]");
                         
                         if (versionComponents.length >= 3 && versionComponents[2].trim().length() > 0)
                         {
@@ -646,7 +646,7 @@ public class org_gjt_mm_mysql_Driver
             {
                 testResult.resultType          = TestResult.WARN;
                 testResult.errorMessage        = "innodb_locks_unsafe_for_binlog should be set to ON";
-                testResult.ramification        = "Alfresco will not function correctly";
+                testResult.ramification        = "Alfresco may not function correctly";
                 testResult.remedy              = "Correct the value of innodb_locks_unsafe_for_binlog and rerun this test";
                 testResult.urisMoreInformation = MYSQL_LOCKS_UNSAFE_URI;
             }
