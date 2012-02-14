@@ -172,8 +172,17 @@ public class DBValidator
         if (result)
         {
             progress(callback, "...recognised");
-            
-            testResult.resultType = TestResult.PASS;
+            if  (databaseType.toLowerCase().equals("db2") || databaseType.toLowerCase().equals("mssqlserver"))
+            {
+                testResult.resultType   = TestResult.FAIL;
+                testResult.errorMessage = "DB2 and MSSqlServer are not supported until Alfresco 4.0.1";
+                testResult.ramification = "Alfresco may not install sucessfully.";
+                testResult.remedy       = "Install a supported database.";
+            }
+            else
+            {
+            	testResult.resultType = TestResult.PASS;
+            }
         }
         else
         {
@@ -182,7 +191,7 @@ public class DBValidator
             testResult.resultType   = TestResult.FAIL;
             testResult.errorMessage = "Unrecognised database type '" + databaseType + "'";
             testResult.ramification = "The database configuration cannot be validated";
-            testResult.remedy       = "Rerun the validaton tool, providing one of the supported database types: mysql, postgresql, oracle, mssqlserver, db2";
+            testResult.remedy       = "Rerun the validaton tool, providing one of the supported database types: mysql, postgresql, oracle"; //, mssqlserver, db2"; //Unsupported for 4.0.0
         }
         
         endTest(callback, testResult);

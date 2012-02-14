@@ -23,6 +23,7 @@ immediately following installation.
 
 Author
 ------
+Andy Hunt (andy dot hunt at alfresco.com)
 Peter Monks (reverse moc.ocserfla@sknomp)
 
 
@@ -92,6 +93,14 @@ from http://code.google.com/p/alfresco-environment-validation/source/checkout
 
 Release History
 ---------------
+v1.0-SNAPSHOT 2012-02-14 - Alfresco 4.0.0
+     Fixed issue #33: Update EVT to work with Alfresco 4.0.0
+	 Fixed issue #34: Add RHEL 6.1
+     Fixed issue #35: Update network.alfresco.com link
+     -- Correctly parse Mysql versions of the format  5.1.41-3ubuntu12.7
+     -- Determine OOO version correctly on linux
+     -- Make windows OOO call headless
+     
 v0.11 released 2011-03-02 - Alfresco 3.4
      Fixed issue #9: PostgreSQL: add test to ensure implicit int -> boolean typecasts are enabled
      Fixed issue #10: Update README to clarify that the tool must be run as the OS user that will run Alfresco
