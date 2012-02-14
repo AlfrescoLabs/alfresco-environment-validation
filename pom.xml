@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.alfresco.extension</groupId>
-  <artifactId>alfresco40-environment-validation</artifactId>
+  <artifactId>alfresco400-environment-validation</artifactId>
   <packaging>jar</packaging>
   <name>Alfresco Environment Validation Utility</name>
-  <version>4.0-v1</version>   <!-- Don't forget to change package.sh every time this value changes! -->
+  <version>1.0-SNAPSHOT</version>   <!-- Don't forget to change package.sh every time this value changes! -->
 
   <repositories>
     <repository>

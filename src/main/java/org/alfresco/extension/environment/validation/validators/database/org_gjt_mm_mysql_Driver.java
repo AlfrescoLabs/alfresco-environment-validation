@@ -644,7 +644,7 @@ public class org_gjt_mm_mysql_Driver
             }
             else
             {
-                testResult.resultType          = TestResult.FAIL;
+                testResult.resultType          = TestResult.WARN;
                 testResult.errorMessage        = "innodb_locks_unsafe_for_binlog should be set to ON";
                 testResult.ramification        = "Alfresco will not function correctly";
                 testResult.remedy              = "Correct the value of innodb_locks_unsafe_for_binlog and rerun this test";

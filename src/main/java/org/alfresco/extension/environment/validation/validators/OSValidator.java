@@ -303,6 +303,7 @@ public class OSValidator
             
             if ("64".equals(dataModel))
             {
+                progress(callback, dataModel + " bit");
             	testResult.resultType = TestResult.PASS;
             }
             else if ("32".equals(dataModel))
@@ -332,19 +333,19 @@ public class OSValidator
                     }
                     else
                     {
-                        testResult.resultType          = TestResult.INFO;
+                        testResult.resultType          = TestResult.WARN;
                         testResult.errorMessage        = "32 bit operating system detected";
-                        testResult.ramification        = "32 bit architectures have inherent scalability limitations.  Alfresco will function correctly but for high-scale instances, a 64 bit architecture is recommended";
-                        testResult.remedy              = "Consider installing a supported 64 bit operating system";
+                        testResult.ramification        = "32 bit architectures have inherent scalability limitations and are no longer supported.";
+                        testResult.remedy              = "Install a supported OS";
                         testResult.urisMoreInformation = ALFRESCO_SPM_URIS;
                     }
                 }
                 else
                 {
-                    testResult.resultType          = TestResult.INFO;
+                    testResult.resultType          = TestResult.WARN;
                     testResult.errorMessage        = "32 bit operating system detected";
-                    testResult.ramification        = "32 bit architectures have inherent scalability limitations.  Alfresco will function correctly but for high-scale instances, a 64 bit architecture is recommended";
-                    testResult.remedy              = "Consider installing a supported 64 bit operating system";
+                    testResult.ramification        = "32 bit architectures have inherent scalability limitations and are no longer supported.";
+                    testResult.remedy              = "Install a supported OS";
                     testResult.urisMoreInformation = ALFRESCO_SPM_URIS;
                 }
             }
@@ -355,7 +356,7 @@ public class OSValidator
                 testResult.resultType   = TestResult.WARN;
                 testResult.errorMessage = "Unable to detect operating system architecture";
                 testResult.ramification = "Alfresco may not start, and if it does it may not function properly";
-                testResult.remedy       = "Please manually validate that the operating system is 32 bit or (preferably) 64 bit";
+                testResult.remedy       = "Please manually validate that the operating system is 64 bit";
             }
             else
             {
@@ -364,7 +365,7 @@ public class OSValidator
                 testResult.resultType   = TestResult.FAIL;
                 testResult.errorMessage = dataModel + "bit operating system detected";
                 testResult.ramification = dataModel + "bit architectures are not supported";
-                testResult.remedy       = "Install a 32 bit or (preferably) a 64 bit operating system";
+                testResult.remedy       = "Install a supported OS";
             }
         }
         else
@@ -374,7 +375,7 @@ public class OSValidator
             testResult.resultType   = TestResult.WARN;
             testResult.errorMessage = "Unable to detect operating system architecture";
             testResult.ramification = "Alfresco may not start, and if it does it may not function properly";
-            testResult.remedy       = "Please manually validate that the operating system is 32 bit or (preferably) 64 bit";
+            testResult.remedy       = "Please manually validate that the operating system is 64 bit";
         }
 
         endTest(callback, testResult);
