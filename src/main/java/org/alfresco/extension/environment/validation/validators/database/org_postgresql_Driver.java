@@ -46,9 +46,9 @@ public class org_postgresql_Driver
     extends AbstractDBSpecificValidator
 {
     // Supported PostgreSQL versions
-    private final static ComparablePair[] SUPPORTED_JDBC_DRIVER_VERSION        = { new ComparablePair(new Integer(8), new Integer(4)) };
-    private final static String           DEVELOPMENT_ONLY_POSTGRESQL_VERSIONS = "8.4";
-    private final static String           SUPPORTED_POSTGRESQL_VERSION         = DEVELOPMENT_ONLY_POSTGRESQL_VERSIONS + ".1";
+    private final static ComparablePair[] SUPPORTED_JDBC_DRIVER_VERSION        = { new ComparablePair(new Integer(9), new Integer(0)) };
+    private final static String           DEVELOPMENT_ONLY_POSTGRESQL_VERSIONS = "9.0";
+    private final static String           SUPPORTED_POSTGRESQL_VERSION         = DEVELOPMENT_ONLY_POSTGRESQL_VERSIONS + ".4";
     
     // "More information" URIs
     private final static String   POSTGRESQL_URI_STR                        = "http://www.postgresql.org/download/";
