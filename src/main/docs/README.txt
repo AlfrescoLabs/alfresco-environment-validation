@@ -98,6 +98,7 @@ v1.0-SNAPSHOT 2012-02-14 - Alfresco 4.0.0
 	 Fixed issue #34: Add RHEL 6.1
      Fixed issue #35: Update network.alfresco.com link
      -- Correctly parse Mysql versions of the format  5.1.41-3ubuntu12.7
+     -- Identify different patch levels for Mysql or Mysql-ubuntu
      -- Determine OOO version correctly on linux
      -- Make windows OOO call headless
      
