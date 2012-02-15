@@ -64,6 +64,7 @@ public class EVT
      */
     public static void main(final String[] args)
     {
+    	System.out.println("java.library.path = " + System.getProperty("java.library.path"));
         final Map parameters = parseParameters(args);
 
         if (parameters.containsKey("-v"))                                  verboseMode = 1;
