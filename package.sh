@@ -1,17 +1,18 @@
 #!/bin/sh
-VERSION=1.0-SNAPSHOT
+VERSION=1.0
+NAME=Alfresco4.0-evt-${VERSION}
 
 # Build (afresh)
 mvn clean package
 
 # Package
 #TODO: Move this into Maven build script
-mkdir -p target/package/evt-${VERSION}/
-cp -R src/main/lib/ target/package/evt-${VERSION}/lib/
-cp target/*.jar target/package/evt-${VERSION}/lib/
-cp src/main/scripts/* target/package/evt-${VERSION}/
-cp src/main/docs/* target/package/evt-${VERSION}/
+mkdir -p target/package/${NAME}/
+cp -R src/main/lib/ target/package/${NAME}/lib/
+cp target/*.jar target/package/${NAME}/lib/
+cp src/main/scripts/* target/package/${NAME}/
+cp src/main/docs/* target/package/${NAME}/
 pushd target/package/
-zip -9 -r ../evt-${VERSION}.zip evt-${VERSION}
+zip -9 -r ../${NAME}.zip ${NAME}
 popd > /dev/null
-echo "\nEVT distributable package may be found at 'target/evt-${VERSION}.zip'\n"
+echo "\nEVT distributable package may be found at 'target/${NAME}.zip'\n"

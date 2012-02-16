@@ -93,6 +93,11 @@ from http://code.google.com/p/alfresco-environment-validation/source/checkout
 
 Release History
 ---------------
+v1.0 2012-02-16 - Alfresco 4.0.0
+     Fixed issue #36: Remove Postgresql Implicit cast test 
+     Fixed issue #29: liblibsigar-x86_64-linux.so does not exist
+     -- FAIL for DB2 and MSSqlServer
+     
 v1.0-SNAPSHOT 2012-02-14 - Alfresco 4.0.0
      Fixed issue #33: Update EVT to work with Alfresco 4.0.0
 	 Fixed issue #34: Add RHEL 6.1
