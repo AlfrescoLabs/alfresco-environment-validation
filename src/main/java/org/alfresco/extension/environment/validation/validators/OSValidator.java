@@ -55,7 +55,7 @@ public class OSValidator
     private final static String SYSTEM_PROPERTY_OS_VERSION = "os.version";
 
     // OS versions
-    private final static String OS_NAME_WINDOWS_SERVER_2008 = "Windows Server 2008";
+    private final static String OS_NAME_WINDOWS_SERVER_2008 = "Windows Server 2008 R2";
     private final static String OS_VERSION_SOLARIS_10       = "5.10";
     private final static String OS_VERSION_RHEL_5_5         = "5.5";
     private final static String OS_VERSION_RHEL_6_1         = "6.1";

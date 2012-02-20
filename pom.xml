@@ -7,7 +7,7 @@
   <artifactId>alfresco400-environment-validation</artifactId>
   <packaging>jar</packaging>
   <name>Alfresco Environment Validation Utility</name>
-  <version>1.0</version>   <!-- Don't forget to change package.sh every time this value changes! -->
+  <version>1.01</version>   <!-- Don't forget to change package.sh every time this value changes! -->
 
   <repositories>
     <repository>
