@@ -48,6 +48,7 @@ public class JVMValidator
     private final static String VALIDATION_TOPIC = "JVM";
     
     private final static String SYSTEM_PROPERTY_JVM_VENDOR         = "java.vendor";
+    private final static String SYSTEM_PROPERTY_JVM_RUNTIME        = "java.runtime.name";
     private final static String SYSTEM_PROPERTY_JVM_HOME           = "java.home";
     private final static String SYSTEM_PROPERTY_JVM_SPEC_VERSION   = "java.specification.version";
     private final static String SYSTEM_PROPERTY_JVM_VERSION        = "java.version";
@@ -55,12 +56,17 @@ public class JVMValidator
     private final static String SYSTEM_PROPERTY_JVM_ARCHITECTURE_2 = "os.arch";
     
     private final static String JVM_VENDOR_SUN   = "Sun Microsystems Inc.";
+    private final static String JVM_VENDOR_OPENJDK   = "OpenJDK";
     private final static String JVM_VENDOR_IBM   = "IBM Corporation";
     private final static String JVM_VENDOR_APPLE = "Apple Inc.";
     
+    private final static String JVM_RUNTIME_OPENJDK   = "OpenJDK Runtime Environment";
+  
+    
     private final static String  JVM_VERSION_15                    = "1.5";
     private final static String  JVM_VERSION_16                    = "1.6";
-    private final static int     JVM_VERSION_16_MINIMUM_PATCHLEVEL = 22;
+    private final static int     SUN_JVM_VERSION_16_MINIMUM_PATCHLEVEL = 27;
+    private final static int     OPENJDK_JVM_VERSION_16_MINIMUM_PATCHLEVEL = 20;
     private final static Pattern JVM_PATCHLEVEL_REGEX              = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)_([0-9]+)");
     
     private final static String   JAVA_DOWNLOAD_URI_STR               = "http://www.oracle.com/technetwork/java/javase/downloads/index.html";
@@ -113,21 +119,33 @@ public class JVMValidator
         startTest(callback, "Vendor");
         
         String jvmVendor = System.getProperty(SYSTEM_PROPERTY_JVM_VENDOR);
-        
+
         if (jvmVendor != null)
         {
-            progress(callback, jvmVendor);
-            
             if (JVM_VENDOR_SUN.equals(jvmVendor))
             {
-                testResult.resultType = TestResult.PASS;
+            	// This covers both Sun and OpenJDK
+            	// TODO: Unsure how reliable java.runtime.name is as a differentiator between Sun and OpenJdk
+            	String jvmRuntime = System.getProperty(SYSTEM_PROPERTY_JVM_RUNTIME);
+            	if (jvmRuntime.equals(JVM_RUNTIME_OPENJDK))
+            	{
+            		jvmVendor=JVM_VENDOR_OPENJDK;
+            	}
+                progress(callback, jvmVendor);
+            	testResult.resultType = TestResult.PASS;
             }
             else if (JVM_VENDOR_IBM.equals(jvmVendor))
             {
-                testResult.resultType = TestResult.PASS;
+                progress(callback, jvmVendor);
+                //testResult.resultType = TestResult.PASS;
+                testResult.resultType          = TestResult.WARN;
+                testResult.errorMessage        = "The IBM JVM will be supported in Alfresco 4.0.1";
+                testResult.ramification        = "Alfresco functions sufficiently well for development purposes but must not be used for production";
+                testResult.urisMoreInformation = ALFRESCO_SPM_URIS;
             }
             else if (JVM_VENDOR_APPLE.equals(jvmVendor))
             {
+                progress(callback, jvmVendor);
                 testResult.resultType          = TestResult.WARN;
                 testResult.errorMessage        = "The Apple JVM is not supported by Alfresco";
                 testResult.ramification        = "Alfresco functions sufficiently well for development purposes but must not be used for production";
@@ -135,6 +153,7 @@ public class JVMValidator
             }
             else
             {
+                progress(callback, jvmVendor);
                 testResult.resultType          = TestResult.FAIL;
                 testResult.errorMessage        = "Unsupported JVM";
                 testResult.ramification        = "Alfresco will not function properly";
@@ -170,63 +189,71 @@ public class JVMValidator
             if (jvmVersion.startsWith(JVM_VERSION_16))
             {
                 String jvmVendor = System.getProperty(SYSTEM_PROPERTY_JVM_VENDOR);
-                
-                if (JVM_VENDOR_SUN.equals(jvmVendor) || JVM_VENDOR_APPLE.equals(jvmVendor))
+            	String jvmRuntime = System.getProperty(SYSTEM_PROPERTY_JVM_RUNTIME);
+            	if (jvmRuntime.equals(JVM_RUNTIME_OPENJDK))
+            	{
+            		jvmVendor=JVM_RUNTIME_OPENJDK;
+            	}
+
+            	int jvmPatchLevel = calculatePatchLevel(jvmVersion);
+            	
+                if (JVM_VENDOR_SUN.equals(jvmVendor)  || (  JVM_VENDOR_APPLE.equals(jvmVendor)))               
                 {
-                    Matcher matcher = JVM_PATCHLEVEL_REGEX.matcher(jvmVersion);
-                    
-                    if (matcher.find())
+                	if (jvmPatchLevel >= SUN_JVM_VERSION_16_MINIMUM_PATCHLEVEL)
                     {
-                        String jvmPatchLevelStr = matcher.group(4);
-                        int    jvmPatchLevel    = -1;
-                        
-                        try
-                        {
-                            jvmPatchLevel = Integer.parseInt(jvmPatchLevelStr);
-                            
-                            if (jvmPatchLevel >= JVM_VERSION_16_MINIMUM_PATCHLEVEL)
-                            {
-                                testResult.resultType = TestResult.PASS;
-                            }
-                            else
-                            {
-                                testResult.resultType          = TestResult.WARN;
-                                testResult.errorMessage        = "Alfresco requires a 1.6 JVM, patchlevel " + JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
-                                testResult.ramification        = "Alfresco functions sufficiently well for development purposes but must not be used for production";
-                                testResult.remedy              = "Install a supported 1.6 JVM, patchlevel " + JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
-                                testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
-                            }
-                            
-                        }
-                        catch (final NumberFormatException nfe)
-                        {
-                            testResult.resultType          = TestResult.WARN;
-                            testResult.errorMessage        = "Unrecognised JVM patchlevel: " + jvmPatchLevel;
-                            testResult.ramification        = "Please manually validate that a 1.6 JVM, patchlevel " + JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher is installed";
-                            testResult.remedy              = "Install a supported 1.6 JVM, patchlevel " + JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
-                            testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
-                        }
+                		testResult.resultType = TestResult.PASS;
+                    }
+                    else if (jvmPatchLevel == -1)
+                    {
+                        testResult.resultType          = TestResult.WARN;
+                        testResult.errorMessage        = "Unrecognised JVM patchlevel: " + jvmPatchLevel;
+                        testResult.ramification        = "Please manually validate that a 1.6 JVM, patchlevel " + SUN_JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher is installed";
+                        testResult.remedy              = "Install a supported 1.6 JVM, patchlevel " + SUN_JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
+                        testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
                     }
                     else
                     {
+                    	testResult.resultType          = TestResult.WARN;
+                        testResult.errorMessage        = "Alfresco requires a 1.6 JVM, patchlevel " + SUN_JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
+                        testResult.ramification        = "Alfresco functions sufficiently well for development purposes but must not be used for production";
+                        testResult.remedy              = "Install a supported 1.6 JVM, patchlevel " + SUN_JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
+                        testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
+                    }
+                }
+                else if ( JVM_VENDOR_OPENJDK.equals(jvmVendor))
+                {
+                	if (jvmPatchLevel >= OPENJDK_JVM_VERSION_16_MINIMUM_PATCHLEVEL)
+                    {
+                		testResult.resultType = TestResult.PASS;
+                    }
+                    else if (jvmPatchLevel == -1)
+                    {
                         testResult.resultType          = TestResult.WARN;
-                        testResult.errorMessage        = "Unable to determine JVM patchlevel";
-                        testResult.ramification        = "Please manually validate that a 1.6 JVM, patchlevel " + JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher is installed";
-                        testResult.remedy              = "Install a 1.6 JVM, patchlevel " + JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
+                        testResult.errorMessage        = "Unrecognised JVM patchlevel: " + jvmPatchLevel;
+                        testResult.ramification        = "Please manually validate that a 1.6 JVM, patchlevel " + OPENJDK_JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher is installed";
+                        testResult.remedy              = "Install a supported 1.6 JVM, patchlevel " + OPENJDK_JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
+                        testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
+                    }
+                    else
+                    {
+                    	testResult.resultType          = TestResult.WARN;
+                        testResult.errorMessage        = "Alfresco requires a 1.6 JVM, patchlevel " + OPENJDK_JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
+                        testResult.ramification        = "Alfresco functions sufficiently well for development purposes but must not be used for production";
+                        testResult.remedy              = "Install a supported 1.6 JVM, patchlevel " + OPENJDK_JVM_VERSION_16_MINIMUM_PATCHLEVEL + " or higher";
                         testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
                     }
                 }
                 else
                 {
-                    // It's not a Sun or Apple JVM, so we can't validate the patchlevel
+                    // It's not a Sun or Apple or OpenJDK JVM , so we can't validate the patchlevel
                     testResult.resultType = TestResult.PASS;
                 }
             }
             else if (JVM_VERSION_15.equals(jvmVersion))
             {
-                testResult.resultType          = TestResult.WARN;
+                testResult.resultType          = TestResult.FAIL;
                 testResult.errorMessage        = "Since v3.0, Alfresco no longer supports the 1.5 JVM";
-                testResult.ramification        = "Alfresco functions sufficiently well for development purposes but must not be used for production";
+                testResult.ramification        = "Alfresco probably won't start, and even if it does it will not function properly";
                 testResult.remedy              = "Install a supported 1.6 JVM";
                 testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
             }
@@ -253,6 +280,26 @@ public class JVMValidator
         endTest(callback, testResult);
     }
     
+    private int calculatePatchLevel(String jvmVersion)
+    {
+    	int jvmPatchLevel = -1;
+        Matcher matcher = JVM_PATCHLEVEL_REGEX.matcher(jvmVersion);
+        
+        if (matcher.find())
+        {
+            String jvmPatchLevelStr = matcher.group(4);
+            try
+            {
+                jvmPatchLevel = Integer.parseInt(jvmPatchLevelStr);
+            }
+            catch (final NumberFormatException nfe)
+            {
+            	jvmPatchLevel = -1;
+            }
+        }
+    	
+    	return jvmPatchLevel;
+    }
     
     private void validateArchitecture(final ValidatorCallback callback)
     {
@@ -285,10 +332,10 @@ public class JVMValidator
             {
                 progress(callback, jvmArchitecture + " bit");
                 
-                testResult.resultType          = TestResult.INFO;
+                testResult.resultType          = TestResult.WARN;
                 testResult.errorMessage        = "32 bit JVM detected";
-                testResult.ramification        = "32 bit architectures have inherent scalability limitations.  Alfresco will function correctly but for high-scale instances, a 64 bit architecture is recommended";
-                testResult.remedy              = "Consider installing a 64 bit JVM";
+                testResult.ramification        = "32 bit architectures have inherent scalability limitations. Alfresco may function sufficiently well for development purposes but must not be used for production";
+                testResult.remedy              = "Install a supported 64 bit JVM";
                 testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
             }
             else
@@ -299,7 +346,7 @@ public class JVMValidator
                 {
                     testResult.resultType          = TestResult.INFO;
                     testResult.errorMessage        = "Probable 32 bit JVM detected";
-                    testResult.ramification        = "32 bit architectures have inherent scalability limitations.  Alfresco will function correctly but for high-scale instances, a 64 bit architecture is recommended";
+                    testResult.ramification        = "32 bit architectures have inherent scalability limitations. Alfresco may function sufficiently well for development purposes but must not be used for production";
                     testResult.remedy              = "Manually validate the JVM architecture and consider installing a 64 bit JVM";
                     testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
                 }
@@ -308,7 +355,7 @@ public class JVMValidator
                     testResult.resultType          = TestResult.WARN;
                     testResult.errorMessage        = "Unable to determine JVM architecture";
                     testResult.ramification        = "Alfresco may not start, and if it does it may not function properly";
-                    testResult.remedy              = "Manually validate that the JVM architecture is 32 bit or (preferably) 64 bit";
+                    testResult.remedy              = "Manually validate that the JVM architecture 64 bit";
                     testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
                 }
             }
@@ -320,7 +367,7 @@ public class JVMValidator
             testResult.resultType          = TestResult.WARN;
             testResult.errorMessage        = "Unable to determine JVM architecture";
             testResult.ramification        = "Alfresco may not start, and if it does it may not function properly";
-            testResult.remedy              = "Manually validate that the JVM architecture is 32 bit or (preferably) 64 bit";
+            testResult.remedy              = "Manually validate that the JVM architecture 64 bit";
             testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
         }
         

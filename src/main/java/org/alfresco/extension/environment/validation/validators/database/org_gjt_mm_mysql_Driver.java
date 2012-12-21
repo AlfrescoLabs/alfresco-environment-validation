@@ -46,20 +46,26 @@ public class org_gjt_mm_mysql_Driver
 {
     // Supported MySQL version
     private final static ComparablePair[] SUPPORTED_JDBC_DRIVER_VERSION      = { new ComparablePair(new Integer(5), new Integer(1)) };
-    private final static String           SUPPORTED_MYSQL_VERSION            = "5.1";
-    private final static String           SUPPORTED_MYSQL_VERSION_SIGNATURE  = SUPPORTED_MYSQL_VERSION + ".";
-    private final static int              MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL = 51;
-    private final static String           FULL_VERSION_STRING                = SUPPORTED_MYSQL_VERSION_SIGNATURE + MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL;
+    private final static String           SUPPORTED_MYSQL_VERSION_BASIC            = "5.5";
+    private final static String           SUPPORTED_MYSQL_VERSION_BASIC_SIGNATURE  = SUPPORTED_MYSQL_VERSION_BASIC + ".";
+    private final static int              MINIMUM_SUPPORTED_MYSQL_BASIC_PATCHLEVEL = 16;
+
+    private final static String           SUPPORTED_MYSQL_VERSION_UBUNTU            = "5.1";
+    private final static String           SUPPORTED_MYSQL_VERSION_UBUNTU_SIGNATURE  = SUPPORTED_MYSQL_VERSION_UBUNTU + ".";
+    private final static int              MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL = 49;
+
+    
+    //    private final static String           FULL_VERSION_STRING                = SUPPORTED_MYSQL_VERSION_BASIC_SIGNATURE + MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL;
     
     // "More information" URIs
     private final static String[] MYSQL_URI                                         = { "http://dev.mysql.com/downloads/mysql/" };
     private final static String[] JDBC_URI                                          = { "http://dev.mysql.com/downloads/connector/j/" };
-    private final static String[] MYSQL_CONFIGURING_STORAGE_ENGINE_URI              = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/storage-engine-setting.html" };
-    private final static String[] MYSQL_CONFIGURING_CHARACTER_SETS_URI              = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/charset-applications.html" };
-    private final static String[] MYSQL_CONFIGURING_IDENTIFIER_CASE_SENSITIVITY_URI = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/identifier-case-sensitivity.html" };
-    private final static String[] MYSQL_AUTO_INCREMENT_LOCK_MODES_URI               = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/innodb-auto-increment-handling.html" };
-    private final static String[] MYSQL_WAIT_TIMEOUT_URI                            = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/server-system-variables.html#sysvar_wait_timeout" };
-    private final static String[] MYSQL_LOCKS_UNSAFE_URI                            = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION + "/en/innodb-parameters.html#sysvar_innodb_locks_unsafe_for_binlog" };
+    private final static String[] MYSQL_CONFIGURING_STORAGE_ENGINE_URI              = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION_BASIC + "/en/storage-engine-setting.html" };
+    private final static String[] MYSQL_CONFIGURING_CHARACTER_SETS_URI              = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION_BASIC + "/en/charset-applications.html" };
+    private final static String[] MYSQL_CONFIGURING_IDENTIFIER_CASE_SENSITIVITY_URI = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION_BASIC + "/en/identifier-case-sensitivity.html" };
+    private final static String[] MYSQL_AUTO_INCREMENT_LOCK_MODES_URI               = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION_BASIC + "/en/innodb-auto-increment-handling.html" };
+    private final static String[] MYSQL_WAIT_TIMEOUT_URI                            = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION_BASIC + "/en/server-system-variables.html#sysvar_wait_timeout" };
+    private final static String[] MYSQL_LOCKS_UNSAFE_URI                            = { "http://dev.mysql.com/doc/refman/" + SUPPORTED_MYSQL_VERSION_BASIC + "/en/innodb-parameters.html#sysvar_innodb_locks_unsafe_for_binlog" };
 
     /**
      * @see org.alfresco.extension.environment.validation.validators.database.DBSpecificValidator#validate(org.alfresco.extension.environment.validation.ValidatorCallback, java.sql.Connection)
@@ -109,56 +115,117 @@ public class org_gjt_mm_mysql_Driver
                 {
                     progress(callback, version);
                     
-                    if (version.startsWith(SUPPORTED_MYSQL_VERSION_SIGNATURE))
+                    // Are we on Ubuntu Mysql or not
+                    int isUbuntu = -1;
+                    isUbuntu = version.toLowerCase().indexOf("ubuntu");
+                    
+                    if (isUbuntu != -1)
                     {
-                        String[] versionComponents = version.split("\\.");
-                        
-                        if (versionComponents.length >= 3 && versionComponents[2].trim().length() > 0)
+                        if (version.startsWith(SUPPORTED_MYSQL_VERSION_UBUNTU_SIGNATURE))
                         {
-                            try
+                            String[] versionComponents = version.split("[\\.-]");
+                            
+                            if (versionComponents.length >= 3 && versionComponents[2].trim().length() > 0)
                             {
-                                int patchLevel = Integer.parseInt(versionComponents[2].trim());
-                                
-                                if (patchLevel >= MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL)
+                                try
                                 {
-                                    testResult.resultType = TestResult.PASS;
+                                    int patchLevel = Integer.parseInt(versionComponents[2].trim());
+                                    
+                                    if (patchLevel >= MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL)
+                                    {
+                                        testResult.resultType = TestResult.PASS;
+                                    }
+                                    else
+                                    {
+                                        testResult.resultType          = TestResult.WARN;
+                                        testResult.errorMessage        = "Unsupported MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  patchlevel (" + patchLevel + ")";
+                                        testResult.ramification        = "Alfresco may function sufficiently well for development purposes but should not be used for production";
+                                        testResult.remedy              = "Install MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL;
+                                        testResult.urisMoreInformation = MYSQL_URI;
+                                    }
                                 }
-                                else
+                                catch (final NumberFormatException nfe)
                                 {
                                     testResult.resultType          = TestResult.WARN;
-                                    testResult.errorMessage        = "Unsupported MySQL " + SUPPORTED_MYSQL_VERSION + " patchlevel (" + patchLevel + ")";
-                                    testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
-                                    testResult.remedy              = "Install MySQL " + SUPPORTED_MYSQL_VERSION + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL;
+                                    testResult.errorMessage        = "Unable to determine MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  patchlevel";
+                                    testResult.ramification        = "Alfresco may function sufficiently well for development purposes but should not be used for production";
+                                    testResult.remedy              = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL + " is installed";
                                     testResult.urisMoreInformation = MYSQL_URI;
+                                    testResult.rootCause           = nfe;
                                 }
                             }
-                            catch (final NumberFormatException nfe)
+                            else
                             {
                                 testResult.resultType          = TestResult.WARN;
-                                testResult.errorMessage        = "Unable to determine MySQL " + SUPPORTED_MYSQL_VERSION + " patchlevel";
-                                testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
-                                testResult.remedy              = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL + " is installed";
+                                testResult.errorMessage        = "Unable to determine MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  patchlevel";
+                                testResult.ramification        = "Alfresco may function sufficiently well for development purposes but should not be used for production";
+                                testResult.remedy              = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL + " is installed";
                                 testResult.urisMoreInformation = MYSQL_URI;
-                                testResult.rootCause           = nfe;
                             }
                         }
                         else
                         {
                             testResult.resultType          = TestResult.WARN;
-                            testResult.errorMessage        = "Unable to determine MySQL " + SUPPORTED_MYSQL_VERSION + " patchlevel";
-                            testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
-                            testResult.remedy              = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL + " is installed";
+                            testResult.errorMessage        = "Unsupported MySQL_ubuntu version";
+                            testResult.ramification        = "Alfresco may not function correctly on this version";
+                            testResult.remedy              = "Install MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL;
                             testResult.urisMoreInformation = MYSQL_URI;
                         }
                     }
                     else
                     {
-                        testResult.resultType          = TestResult.FAIL;
-                        testResult.errorMessage        = "Unsupported MySQL version";
-                        testResult.ramification        = "Alfresco will not function correctly on this version";
-                        testResult.remedy              = "Install MySQL " + SUPPORTED_MYSQL_VERSION + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL;
-                        testResult.urisMoreInformation = MYSQL_URI;
+                        if (version.startsWith(SUPPORTED_MYSQL_VERSION_BASIC_SIGNATURE))
+                        {
+                            String[] versionComponents = version.split("\\.");
+                            
+                            if (versionComponents.length >= 3 && versionComponents[2].trim().length() > 0)
+                            {
+                                try
+                                {
+                                    int patchLevel = Integer.parseInt(versionComponents[2].trim());
+                                    
+                                    if (patchLevel >= MINIMUM_SUPPORTED_MYSQL_BASIC_PATCHLEVEL)
+                                    {
+                                        testResult.resultType = TestResult.PASS;
+                                    }
+                                    else
+                                    {
+                                        testResult.resultType          = TestResult.WARN;
+                                        testResult.errorMessage        = "Unsupported MySQL " + SUPPORTED_MYSQL_VERSION_BASIC + " patchlevel (" + patchLevel + ")";
+                                        testResult.ramification        = "Alfresco may function sufficiently well for development purposes but should not be used for production";
+                                        testResult.remedy              = "Install MySQL " + SUPPORTED_MYSQL_VERSION_BASIC + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_BASIC_PATCHLEVEL;
+                                        testResult.urisMoreInformation = MYSQL_URI;
+                                    }
+                                }
+                                catch (final NumberFormatException nfe)
+                                {
+                                    testResult.resultType          = TestResult.WARN;
+                                    testResult.errorMessage        = "Unable to determine MySQL " + SUPPORTED_MYSQL_VERSION_BASIC + " patchlevel";
+                                    testResult.ramification        = "Alfresco may function sufficiently well for development purposes but should not be used for production";
+                                    testResult.remedy              = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION_BASIC + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_BASIC_PATCHLEVEL + " is installed";
+                                    testResult.urisMoreInformation = MYSQL_URI;
+                                    testResult.rootCause           = nfe;
+                                }
+                            }
+                            else
+                            {
+                                testResult.resultType          = TestResult.WARN;
+                                testResult.errorMessage        = "Unable to determine MySQL " + SUPPORTED_MYSQL_VERSION_BASIC + " patchlevel";
+                                testResult.ramification        = "Alfresco may function sufficiently well for development purposes but should not be used for production";
+                                testResult.remedy              = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION_BASIC + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_BASIC_PATCHLEVEL + " is installed";
+                                testResult.urisMoreInformation = MYSQL_URI;
+                            }
+                        }
+                        else
+                        {
+                            testResult.resultType          = TestResult.WARN;
+                            testResult.errorMessage        = "Unsupported MySQL version";
+                            testResult.ramification        = "Alfresco may not function correctly on this version";
+                            testResult.remedy              = "Install MySQL " + SUPPORTED_MYSQL_VERSION_BASIC + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_BASIC_PATCHLEVEL;
+                            testResult.urisMoreInformation = MYSQL_URI;
+                        }
                     }
+                    
                 }
                 else
                 {
@@ -167,7 +234,7 @@ public class org_gjt_mm_mysql_Driver
                     testResult.resultType   = TestResult.FAIL;
                     testResult.errorMessage = "Unable to determine MySQL version";
                     testResult.ramification = "Alfresco may not function correctly";
-                    testResult.remedy       = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL + " is installed";
+                    testResult.remedy       = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION_BASIC + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_BASIC_PATCHLEVEL + " is installed";
                 }
             }
             else
@@ -177,7 +244,7 @@ public class org_gjt_mm_mysql_Driver
                 testResult.resultType   = TestResult.FAIL;
                 testResult.errorMessage = "Unable to determine MySQL version";
                 testResult.ramification = "Alfresco may not function correctly";
-                testResult.remedy       = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL + " is installed";
+                testResult.remedy       = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION_BASIC + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_BASIC_PATCHLEVEL + " is installed";
             }
         }
         catch (final SQLException se)
@@ -187,7 +254,7 @@ public class org_gjt_mm_mysql_Driver
             testResult.resultType   = TestResult.FAIL;
             testResult.errorMessage = "Unable to determine MySQL version";
             testResult.ramification = "Alfresco may not function correctly";
-            testResult.remedy       = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL + " is installed";
+            testResult.remedy       = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION_BASIC + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_BASIC_PATCHLEVEL + " is installed";
             testResult.rootCause    = se;
         }
         
@@ -617,9 +684,9 @@ public class org_gjt_mm_mysql_Driver
             
             progress(callback, "unknown");
             
-            testResult.resultType   = TestResult.WARN;
+            testResult.resultType   = TestResult.INFO;
             testResult.errorMessage = "Unable to determine innodb_locks_unsafe_for_binlog setting";
-            testResult.ramification = "Alfresco may not function correctly";
+            testResult.ramification = "Alfresco may not function correctly under certain circumstances";
             testResult.remedy       = "Manually execute the SQL statement 'SHOW VARIABLES LIKE 'innodb_locks_unsafe_for_binlog';' " +
                                       "and ensure that the values is 'ON'";
             testResult.urisMoreInformation = MYSQL_LOCKS_UNSAFE_URI;
@@ -644,9 +711,9 @@ public class org_gjt_mm_mysql_Driver
             }
             else
             {
-                testResult.resultType          = TestResult.FAIL;
+                testResult.resultType          = TestResult.INFO;
                 testResult.errorMessage        = "innodb_locks_unsafe_for_binlog should be set to ON";
-                testResult.ramification        = "Alfresco will not function correctly";
+                testResult.ramification        = "Alfresco may not function correctly under certain circumstances";
                 testResult.remedy              = "Correct the value of innodb_locks_unsafe_for_binlog and rerun this test";
                 testResult.urisMoreInformation = MYSQL_LOCKS_UNSAFE_URI;
             }

@@ -46,16 +46,14 @@ public class org_postgresql_Driver
     extends AbstractDBSpecificValidator
 {
     // Supported PostgreSQL versions
-    private final static ComparablePair[] SUPPORTED_JDBC_DRIVER_VERSION        = { new ComparablePair(new Integer(8), new Integer(4)) };
-    private final static String           DEVELOPMENT_ONLY_POSTGRESQL_VERSIONS = "8.4";
-    private final static String           SUPPORTED_POSTGRESQL_VERSION         = DEVELOPMENT_ONLY_POSTGRESQL_VERSIONS + ".1";
+    private final static ComparablePair[] SUPPORTED_JDBC_DRIVER_VERSION        = { new ComparablePair(new Integer(9), new Integer(0)) };
+    private final static String           DEVELOPMENT_ONLY_POSTGRESQL_VERSIONS = "9.0";
+    private final static String           SUPPORTED_POSTGRESQL_VERSION         = DEVELOPMENT_ONLY_POSTGRESQL_VERSIONS + ".4";
     
     // "More information" URIs
     private final static String   POSTGRESQL_URI_STR                        = "http://www.postgresql.org/download/";
-    private final static String[] POSTGRESQL_URI                            = { POSTGRESQL_URI_STR };
     private final static String[] JDBC_URI                                  = { "http://jdbc.postgresql.org/download.html" };
     private final static String[] POSTGRESQL_CONFIGURING_CHARACTER_SETS_URI = { "http://www.postgresql.org/docs/" + DEVELOPMENT_ONLY_POSTGRESQL_VERSIONS + "/interactive/multibyte.html" };
-    private final static String[] POSTGRESQL_TYPE_CONVERSION_URI            = { "http://www.postgresql.org/docs/" + DEVELOPMENT_ONLY_POSTGRESQL_VERSIONS + "/static/typeconv.html" };
     private final static String[] ALFRESCO_SPM_AND_POSTGRESQL_URIS          = { AbstractValidator.ALFRESCO_SUMMARY_SPM_URI_STR, POSTGRESQL_URI_STR }; 
     
                          
@@ -70,7 +68,6 @@ public class org_postgresql_Driver
         validateJdbcDriverVersion(callback, con, SUPPORTED_JDBC_DRIVER_VERSION, JDBC_URI);
         validateDatabaseVersion(callback, con);
         validateEncoding(callback, con);
-        validateIntToBoolCasts(callback, con);
     }
     
     
@@ -258,112 +255,5 @@ public class org_postgresql_Driver
 
     
     
-    private final void validateIntToBoolCasts(final ValidatorCallback callback, final Connection con)
-    {
-        startTest(callback, "Int to Bool Casts");
-        
-        TestResult testResult = new TestResult();
-        
-        try
-        {
-            List resultSet = query(con, "SELECT DISTINCT c.castcontext AS TYPECASTTYPE\n" +
-                                        "  FROM  pg_cast c\n" +
-                                        "        INNER JOIN pg_type src ON src.oid = c.castsource\n" +
-                                        "        INNER JOIN pg_type tgt ON tgt.oid = c.casttarget\n" +
-                                        "  WHERE  src.typname LIKE 'int%' AND tgt.typname = 'bool'");
-            
-            if (resultSet != null)
-            {
-                if (resultSet.size() > 0)
-                {
-                    boolean allImplicit = true;
-                    
-                    // Loop through the resultset and make sure all rows have the value 'i'
-                    for (int i = 0; i < resultSet.size(); i++)
-                    {
-                        Map row = (Map)resultSet.get(i);
-                        
-                        if (row == null)
-                        {
-                            allImplicit = false;
-                            break;
-                        }
-                        else
-                        {
-                            String typeCastType = (String)row.get("TYPECASTTYPE");
-                            
-                            if (typeCastType == null)
-                            {
-                                allImplicit = false;
-                                break;
-                            }
-                            else
-                            {
-                                if (!typeCastType.equalsIgnoreCase("i"))
-                                {
-                                    allImplicit = false;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                        
-                    progress(callback, allImplicit ? "implicit" : "explicit");
-                        
-                    if (allImplicit)
-                    {
-                        testResult.resultType = TestResult.PASS;
-                    }
-                    else
-                    {
-                        testResult.resultType          = TestResult.FAIL;
-                        testResult.errorMessage        = "Implicit casts from int* to bool are not enabled";
-                        testResult.ramification        = "Alfresco will not function correctly";
-                        testResult.remedy              = "Correct the PostgreSQL implicit type conversion configuration and rerun this test";
-                        testResult.urisMoreInformation = POSTGRESQL_TYPE_CONVERSION_URI;
-                    }
-                }
-                else
-                {
-                    progress(callback, "unknown");
-                    
-                    testResult.resultType          = TestResult.WARN;
-                    testResult.errorMessage        = "Unable to determine whether implicit casts from int* to bool are enabled";
-                    testResult.ramification        = "Alfresco may not function correctly";
-                    testResult.remedy              = "Manually execute the SQL statement '" +
-                                                     "SELECT DISTINCT c.castcontext FROM pg_cast c INNER JOIN pg_type src ON src.oid = c.castsource INNER JOIN pg_type tgt ON tgt.oid = c.casttarget WHERE src.typname LIKE 'int%' AND tgt.typname = 'bool';' " +
-                                                     "and ensure that all values are 'i' (implicit typecasts)";
-                    testResult.urisMoreInformation = POSTGRESQL_TYPE_CONVERSION_URI;
-                }
-            }
-            else
-            {
-                progress(callback, "unknown");
-                
-                testResult.resultType          = TestResult.WARN;
-                testResult.errorMessage        = "Unable to determine whether implicit casts from int* to bool are enabled";
-                testResult.ramification        = "Alfresco may not function correctly";
-                testResult.remedy              = "Manually execute the SQL statement '" +
-                                                 "SELECT DISTINCT c.castcontext FROM pg_cast c INNER JOIN pg_type src ON src.oid = c.castsource INNER JOIN pg_type tgt ON tgt.oid = c.casttarget WHERE src.typname LIKE 'int%' AND tgt.typname = 'bool';' " +
-                                                 "and ensure that all values are 'i' (implicit typecasts)";
-                testResult.urisMoreInformation = POSTGRESQL_TYPE_CONVERSION_URI;
-            }
-        }
-        catch (SQLException se)
-        {
-            progress(callback, "unknown");
-            
-            testResult.resultType          = TestResult.WARN;
-            testResult.errorMessage        = "Unable to determine whether implicit typecasts are enabled";
-            testResult.ramification        = "Alfresco may not function correctly";
-            testResult.remedy              = "Manually execute the SQL statement '" +
-                                             "SELECT DISTINCT c.castcontext FROM pg_cast c INNER JOIN pg_type src ON src.oid = c.castsource INNER JOIN pg_type tgt ON tgt.oid = c.casttarget WHERE src.typname LIKE 'int%' AND tgt.typname = 'bool';' " +
-                                             "and ensure that all values are 'i' (implicit typecasts)";
-            testResult.urisMoreInformation = POSTGRESQL_TYPE_CONVERSION_URI;
-            testResult.rootCause           = se;
-        }
-        
-        endTest(callback, testResult);
-    }
         
 }
