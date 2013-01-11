@@ -47,7 +47,7 @@ public class com_ibm_db2_jcc_DB2Driver
     // See http://www-01.ibm.com/support/docview.wss?rs=71&uid=swg21363866 for a list of JDBC driver versions
     private final static ComparablePair[] SUPPORTED_JDBC_DRIVER_VERSIONS = { new ComparablePair(new Integer(3), new Integer(61)) };   // DB2 9.7 FP3 and FP3a
     // See https://www-304.ibm.com/support/docview.wss?rs=71&uid=swg27007053 for a list of server version strings 
-    private final static String           SUPPORTED_DB2_VERSION          = "9.7.0.3";
+    private final static String           SUPPORTED_DB2_VERSION          = "9.7.0.4";
     
     // "More information" URIs
     private final static String[] DB2_URI                            = { "http://www-01.ibm.com/software/data/db2/linux-unix-windows/download.html" };
