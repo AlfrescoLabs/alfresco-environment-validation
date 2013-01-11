@@ -65,7 +65,7 @@ public class JVMValidator
     
     private final static String  JVM_VERSION_15                    = "1.5";
     private final static String  JVM_VERSION_16                    = "1.6";
-    private final static int     SUN_JVM_VERSION_16_MINIMUM_PATCHLEVEL = 27;
+    private final static int     SUN_JVM_VERSION_16_MINIMUM_PATCHLEVEL = 31;
     private final static int     OPENJDK_JVM_VERSION_16_MINIMUM_PATCHLEVEL = 20;
     private final static Pattern JVM_PATCHLEVEL_REGEX              = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)_([0-9]+)");
     
