@@ -26,8 +26,8 @@
 
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.alfresco.extension.environment.validation.TestResult;
 import org.alfresco.extension.environment.validation.ValidatorCallback;
@@ -56,7 +56,7 @@ public class EVT
     
     
     private static int verboseMode = 0;    // 0 = not verbose, 1 = verbose, 2 = super verbose
-    
+    private static int       DEFAULT_REMAINING_LENGTH = 48;
     
     
     /**
@@ -64,7 +64,7 @@ public class EVT
      */
     public static void main(final String[] args)
     {
-    	System.out.println("java.library.path = " + System.getProperty("java.library.path"));
+        System.out.println("java.library.path = " + System.getProperty("java.library.path"));
         final Map parameters = parseParameters(args);
 
         if (parameters.containsKey("-v"))                                  verboseMode = 1;
@@ -179,18 +179,18 @@ public class EVT
             
             System.out.print(": ");
             
-            remainingLength = 45; 
+            remainingLength = DEFAULT_REMAINING_LENGTH;
         }
         
         public void progress(final String progressMessage)
         {
             if (progressMessage != null)
             {
-                if (progressMessage.length() > 45)
+                if (progressMessage.length() > DEFAULT_REMAINING_LENGTH)
                 {
                     System.out.println(progressMessage);
                     System.out.print("                          ");
-                    remainingLength = 45;
+                    remainingLength = DEFAULT_REMAINING_LENGTH;
                 }
                 else
                 {
