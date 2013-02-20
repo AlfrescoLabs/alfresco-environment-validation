@@ -1,5 +1,5 @@
 #!/bin/sh
-VERSION=1.01
+VERSION=1.02
 NAME=Alfresco4.0-evt-${VERSION}
 
 # Build (afresh)
