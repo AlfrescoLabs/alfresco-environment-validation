@@ -64,14 +64,14 @@ public class EVT
      */
     public static void main(final String[] args)
     {
-        System.out.println("java.library.path = " + System.getProperty("java.library.path"));
+        // System.out.println("java.library.path = " + System.getProperty("java.library.path"));
         final Map parameters = parseParameters(args);
 
         if (parameters.containsKey("-v"))                                  verboseMode = 1;
         if (parameters.containsKey("-V") || parameters.containsKey("-vv")) verboseMode = 2;
         
         System.out.println("\nAlfresco Environment Validation Tool (for Alfresco Enterprise 4.0.2)");
-        System.out.println("------------------------------------------------------------------");
+        System.out.println("--------------------------------------------------------------------");
 
         if (parameters.isEmpty()                                             ||
             parameters.containsKey("-?")                                     ||
