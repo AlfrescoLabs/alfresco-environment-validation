@@ -33,6 +33,10 @@ import org.alfresco.extension.environment.validation.TestResult;
 import org.alfresco.extension.environment.validation.ValidatorCallback;
 import org.alfresco.extension.environment.validation.validators.AllValidators;
 import org.alfresco.extension.environment.validation.validators.DBValidator;
+import org.alfresco.extension.util.PropertiesUtil;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 
 
 /**
@@ -43,9 +47,12 @@ import org.alfresco.extension.environment.validation.validators.DBValidator;
  */
 public class EVT
 {
+    //constant representing Alfresco version in parameter map
+    public static final String ALFRESCO_VERSION = "alfresco.version"; 
     // Map of "shortcut" parameters to "long form" parameters
     private static final Map PARAMETER_MAP = new HashMap()
     {{
+        put("-a", ALFRESCO_VERSION); 
         put("-t", DBValidator.PARAMETER_DATABASE_TYPE);
         put("-h", DBValidator.PARAMETER_DATABASE_HOSTNAME);
         put("-r", DBValidator.PARAMETER_DATABASE_PORT);
@@ -54,6 +61,7 @@ public class EVT
         put("-p", DBValidator.PARAMETER_DATABASE_PASSWORD);
     }};
     
+    public static Configuration config = null;
     
     private static int verboseMode = 0;    // 0 = not verbose, 1 = verbose, 2 = super verbose
     
@@ -64,12 +72,24 @@ public class EVT
      */
     public static void main(final String[] args)
     {
+        try
+        {
+            config = new PropertiesConfiguration("general.properties");
+        }
+        catch (ConfigurationException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.exit(1);
+            
+        }
         final Map parameters = parseParameters(args);
-
+        
         if (parameters.containsKey("-v"))                                  verboseMode = 1;
         if (parameters.containsKey("-V") || parameters.containsKey("-vv")) verboseMode = 2;
-        
-        System.out.println("\nAlfresco Environment Validation Tool (for Alfresco Enterprise 3.4)");
+        //the from version and the to version must be put in property file
+        String supportedVersions = PropertiesUtil.concatenatePropsValues(config, ALFRESCO_VERSION, ",");
+        System.out.println("\nAlfresco Environment Validation Tool (for Alfresco Enterprise " + supportedVersions + ")");
         System.out.println("------------------------------------------------------------------");
 
         if (parameters.isEmpty()                                             ||
@@ -78,16 +98,19 @@ public class EVT
             parameters.containsKey("/?")                                     ||
             !parameters.containsKey(DBValidator.PARAMETER_DATABASE_TYPE)     ||
             !parameters.containsKey(DBValidator.PARAMETER_DATABASE_HOSTNAME) ||
-            !parameters.containsKey(DBValidator.PARAMETER_DATABASE_LOGIN))
+            !parameters.containsKey(DBValidator.PARAMETER_DATABASE_LOGIN)    ||
+            !parameters.containsKey(ALFRESCO_VERSION) )
         {
             System.out.println("");
             System.out.println("usage: evt[.sh|.cmd] [-?|--help] [-v] [-V|-vv]");
-            System.out.println("            -t databaseType -h databaseHost [-r databasePort]");
+            System.out.println("            -a alfrescoversion -t databaseType -h databaseHost [-r databasePort]");
             System.out.println("            [-d databaseName] -l databaseLogin [-p databasePassword]");
             System.out.println("");
             System.out.println("where:      -?|--help        - display this help");
             System.out.println("            -v               - produce verbose output");
             System.out.println("            -V|-vv           - produce super-verbose output (stack traces)");
+            System.out.println("            alfrescoversion  - Version for which the verification is made .  May be one of:");
+            System.out.println("                               4.0.0,4.0.1,4.0.2,4.1.1,4.1.2,4.1.3,4.1.4,4.1.5,4.1.6,4.2");
             System.out.println("            databaseType     - the type of database.  May be one of:");
             System.out.println("                               mysql, postgresql, oracle, mssqlserver, db2");
             System.out.println("            databaseHost     - the hostname of the database server");

@@ -40,13 +40,15 @@ import org.alfresco.extension.environment.validation.ValidatorCallback;
 public class AllValidators
     implements Validator
 {
-    private final static Validator[] validators = {   //####TODO: Reconsider the order of this list
-                                                      new JVMValidator(),
-                                                      new OSValidator(),
-                                                      new ServerHardwareValidator(),
-                                                      new NetworkValidator(),
-                                                      new ThirdPartyApplicationValidator(),
-                                                      new DBValidator()
+    private final static Validator[] validators = {   
+                                                      new PropertiesBasedJVMValidator()
+                                                      //####TODO: Reconsider the order of this list
+                                                      //new JVMValidator(),
+                                                      //new OSValidator(),
+                                                      //new ServerHardwareValidator(),
+                                                      //new NetworkValidator(),
+                                                      //new ThirdPartyApplicationValidator(),
+                                                      //new DBValidator()
                                                   };
 
     /**
