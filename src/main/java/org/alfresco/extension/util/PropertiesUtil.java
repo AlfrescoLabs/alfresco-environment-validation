@@ -9,7 +9,7 @@ import org.apache.commons.configuration.Configuration;
  * @author philippe
  *
  */
-public class PropertiesUtil
+public class PropertiesUtil 
 {
     /**
      * Utility method returning the "sparator" separated string of the options corresponding to the key

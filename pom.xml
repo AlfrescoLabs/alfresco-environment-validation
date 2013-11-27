@@ -23,7 +23,7 @@
         <!-- Target an ancient JVM to try to ensure that this tool can run anywhere that a JVM (no matter how crusty!) is installed. -->
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.4</source>
+          <source>1.4</source> 
           <target>1.4</target>
         </configuration>
       </plugin>

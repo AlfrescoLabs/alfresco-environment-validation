@@ -66,7 +66,7 @@ public class PropertiesBasedJVMValidator extends AbstractValidator
         else
         {
             progress(callback, "unknown");
-            
+               
             testResult.resultType          = TestResult.FAIL;
             testResult.errorMessage        = "Unable to determine JVM version";
             testResult.ramification        = "Alfresco probably won't start, and even if it does it will not function properly";

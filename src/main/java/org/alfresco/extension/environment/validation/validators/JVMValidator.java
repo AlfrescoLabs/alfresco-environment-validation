@@ -124,7 +124,7 @@ public class JVMValidator
             }
             else if (JVM_VENDOR_IBM.equals(jvmVendor))
             {
-                testResult.resultType = TestResult.PASS;
+                testResult.resultType = TestResult.PASS; 
             }
             else if (JVM_VENDOR_APPLE.equals(jvmVendor))
             {

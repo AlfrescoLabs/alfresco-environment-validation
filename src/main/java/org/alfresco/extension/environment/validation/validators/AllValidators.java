@@ -37,7 +37,7 @@ import org.alfresco.extension.environment.validation.ValidatorCallback;
  * @author Peter Monks (pmonks@alfresco.com)
  *
  */
-public class AllValidators
+public class AllValidators 
     implements Validator
 {
     private final static Validator[] validators = {   
