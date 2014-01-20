@@ -46,13 +46,13 @@ public class org_gjt_mm_mysql_Driver
 {
     // Supported MySQL version
     private final static ComparablePair[] SUPPORTED_JDBC_DRIVER_VERSION      = { new ComparablePair(new Integer(5), new Integer(1)) };
-    private final static String           SUPPORTED_MYSQL_VERSION_BASIC            = "5.5";
+    private final static String           SUPPORTED_MYSQL_VERSION_BASIC            = "5.6";
     private final static String           SUPPORTED_MYSQL_VERSION_BASIC_SIGNATURE  = SUPPORTED_MYSQL_VERSION_BASIC + ".";
-    private final static int              MINIMUM_SUPPORTED_MYSQL_BASIC_PATCHLEVEL = 16;
+    private final static int              MINIMUM_SUPPORTED_MYSQL_BASIC_PATCHLEVEL = 1;
 
-    private final static String           SUPPORTED_MYSQL_VERSION_UBUNTU            = "5.1";
-    private final static String           SUPPORTED_MYSQL_VERSION_UBUNTU_SIGNATURE  = SUPPORTED_MYSQL_VERSION_UBUNTU + ".";
-    private final static int              MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL = 49;
+    // private final static String           SUPPORTED_MYSQL_VERSION_UBUNTU            = "5.1";
+    // private final static String           SUPPORTED_MYSQL_VERSION_UBUNTU_SIGNATURE  = SUPPORTED_MYSQL_VERSION_UBUNTU + ".";
+    // private final static int              MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL = 49;
 
     
     //    private final static String           FULL_VERSION_STRING                = SUPPORTED_MYSQL_VERSION_BASIC_SIGNATURE + MINIMUM_SUPPORTED_MYSQL_PATCHLEVEL;
@@ -114,66 +114,67 @@ public class org_gjt_mm_mysql_Driver
                 if (version != null && version.trim().length() > 0)
                 {
                     progress(callback, version);
-                    
-                    // Are we on Ubuntu Mysql or not
-                    int isUbuntu = -1;
-                    isUbuntu = version.toLowerCase().indexOf("ubuntu");
-                    
-                    if (isUbuntu != -1)
-                    {
-                        if (version.startsWith(SUPPORTED_MYSQL_VERSION_UBUNTU_SIGNATURE))
-                        {
-                            String[] versionComponents = version.split("[\\.-]");
-                            
-                            if (versionComponents.length >= 3 && versionComponents[2].trim().length() > 0)
-                            {
-                                try
-                                {
-                                    int patchLevel = Integer.parseInt(versionComponents[2].trim());
-                                    
-                                    if (patchLevel >= MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL)
-                                    {
-                                        testResult.resultType = TestResult.PASS;
-                                    }
-                                    else
-                                    {
-                                        testResult.resultType          = TestResult.WARN;
-                                        testResult.errorMessage        = "Unsupported MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  patchlevel (" + patchLevel + ")";
-                                        testResult.ramification        = "Alfresco may function sufficiently well for development purposes but should not be used for production";
-                                        testResult.remedy              = "Install MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL;
-                                        testResult.urisMoreInformation = MYSQL_URI;
-                                    }
-                                }
-                                catch (final NumberFormatException nfe)
-                                {
-                                    testResult.resultType          = TestResult.WARN;
-                                    testResult.errorMessage        = "Unable to determine MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  patchlevel";
-                                    testResult.ramification        = "Alfresco may function sufficiently well for development purposes but should not be used for production";
-                                    testResult.remedy              = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL + " is installed";
-                                    testResult.urisMoreInformation = MYSQL_URI;
-                                    testResult.rootCause           = nfe;
-                                }
-                            }
-                            else
-                            {
-                                testResult.resultType          = TestResult.WARN;
-                                testResult.errorMessage        = "Unable to determine MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  patchlevel";
-                                testResult.ramification        = "Alfresco may function sufficiently well for development purposes but should not be used for production";
-                                testResult.remedy              = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL + " is installed";
-                                testResult.urisMoreInformation = MYSQL_URI;
-                            }
-                        }
-                        else
-                        {
-                            testResult.resultType          = TestResult.WARN;
-                            testResult.errorMessage        = "Unsupported MySQL_ubuntu version";
-                            testResult.ramification        = "Alfresco may not function correctly on this version";
-                            testResult.remedy              = "Install MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL;
-                            testResult.urisMoreInformation = MYSQL_URI;
-                        }
-                    }
-                    else
-                    {
+
+// TODO: Uncomment when Ubuntu is supported for 4.2                    
+//                    // Are we on Ubuntu Mysql or not
+//                    int isUbuntu = -1;
+//                    isUbuntu = version.toLowerCase().indexOf("ubuntu");
+//
+//                    if (isUbuntu != -1)
+//                    {
+//                        if (version.startsWith(SUPPORTED_MYSQL_VERSION_UBUNTU_SIGNATURE))
+//                        {
+//                            String[] versionComponents = version.split("[\\.-]");
+//                            
+//                            if (versionComponents.length >= 3 && versionComponents[2].trim().length() > 0)
+//                            {
+//                                try
+//                                {
+//                                    int patchLevel = Integer.parseInt(versionComponents[2].trim());
+//                                    
+//                                    if (patchLevel >= MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL)
+//                                    {
+//                                        testResult.resultType = TestResult.PASS;
+//                                    }
+//                                    else
+//                                    {
+//                                        testResult.resultType          = TestResult.WARN;
+//                                        testResult.errorMessage        = "Unsupported MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  patchlevel (" + patchLevel + ")";
+//                                        testResult.ramification        = "Alfresco may function sufficiently well for development purposes but should not be used for production";
+//                                        testResult.remedy              = "Install MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL;
+//                                        testResult.urisMoreInformation = MYSQL_URI;
+//                                    }
+//                                }
+//                                catch (final NumberFormatException nfe)
+//                                {
+//                                    testResult.resultType          = TestResult.WARN;
+//                                    testResult.errorMessage        = "Unable to determine MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  patchlevel";
+//                                    testResult.ramification        = "Alfresco may function sufficiently well for development purposes but should not be used for production";
+//                                    testResult.remedy              = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL + " is installed";
+//                                    testResult.urisMoreInformation = MYSQL_URI;
+//                                    testResult.rootCause           = nfe;
+//                                }
+//                            }
+//                            else
+//                            {
+//                                testResult.resultType          = TestResult.WARN;
+//                                testResult.errorMessage        = "Unable to determine MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  patchlevel";
+//                                testResult.ramification        = "Alfresco may function sufficiently well for development purposes but should not be used for production";
+//                                testResult.remedy              = "Manually validate that MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL + " is installed";
+//                                testResult.urisMoreInformation = MYSQL_URI;
+//                            }
+//                        }
+//                        else
+//                        {
+//                            testResult.resultType          = TestResult.WARN;
+//                            testResult.errorMessage        = "Unsupported MySQL_ubuntu version";
+//                            testResult.ramification        = "Alfresco may not function correctly on this version";
+//                            testResult.remedy              = "Install MySQL " + SUPPORTED_MYSQL_VERSION_UBUNTU + "-ubuntu :  with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_UBUNTU_PATCHLEVEL;
+//                            testResult.urisMoreInformation = MYSQL_URI;
+//                        }
+//                    }
+//                    else
+//                    {
                         if (version.startsWith(SUPPORTED_MYSQL_VERSION_BASIC_SIGNATURE))
                         {
                             String[] versionComponents = version.split("\\.");
@@ -224,7 +225,7 @@ public class org_gjt_mm_mysql_Driver
                             testResult.remedy              = "Install MySQL " + SUPPORTED_MYSQL_VERSION_BASIC + " with at least patchlevel " + MINIMUM_SUPPORTED_MYSQL_BASIC_PATCHLEVEL;
                             testResult.urisMoreInformation = MYSQL_URI;
                         }
-                    }
+//                    }
                     
                 }
                 else

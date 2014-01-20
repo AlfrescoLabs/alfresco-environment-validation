@@ -59,9 +59,9 @@ public class ThirdPartyApplicationValidator
     
     
     private final static String[]   OS_COMMAND_IMAGE_MAGICK_UNIX     = { "convert", "-version" };
-    private final static String[]   OS_COMMAND_IMAGE_MAGICK_WINDOWS  = { "imconvert", "-version" };
+    private final static String[]   OS_COMMAND_IMAGE_MAGICK_WINDOWS  = { "convert", "-version" };
     private final static Pattern    IMAGE_MAGICK_VERSION_REGEX       = Pattern.compile("Version: ImageMagick (([0-9]+\\.[0-9]+)\\.[0-9]+(-[0-9]*)?)");
-    private final static String     MINIMUM_IMAGE_MAGICK_VERSION_STR = "6.5";   
+    private final static String     MINIMUM_IMAGE_MAGICK_VERSION_STR = "6.8";   
     private final static BigDecimal MINIMUM_IMAGE_MAGICK_VERSION     = new BigDecimal(MINIMUM_IMAGE_MAGICK_VERSION_STR);
     
     private final static String   IMAGE_MAGICK_DOWNLOAD_URI                      = "http://www.imagemagick.org/";

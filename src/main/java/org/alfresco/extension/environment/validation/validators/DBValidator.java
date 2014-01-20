@@ -61,8 +61,9 @@ public class DBValidator
         put("mysql",       "org.gjt.mm.mysql.Driver");
         put("postgresql",  "org.postgresql.Driver");
         put("oracle",      "oracle.jdbc.OracleDriver");
-        put("mssqlserver", "net.sourceforge.jtds.jdbc.Driver");
-        put("db2",         "com.ibm.db2.jcc.DB2Driver");
+        //TODO: Uncomment and modify once mssqlserver and db2 are supported for 4.2
+        //put("mssqlserver", "net.sourceforge.jtds.jdbc.Driver");
+        //put("db2",         "com.ibm.db2.jcc.DB2Driver");
     }};
     
     private static final Map DATABASE_TYPE_TO_JDBC_URL_MAP = new HashMap()
@@ -70,8 +71,9 @@ public class DBValidator
         put("mysql",       "jdbc:mysql://<host>:<port>/<database>");
         put("postgresql",  "jdbc:postgresql://<host>:<port>/<database>");
         put("oracle",      "jdbc:oracle:thin:@<host>:<port>:<database>");
-        put("mssqlserver", "jdbc:jtds:sqlserver://<host>:<port>/<database>");
-        put("db2",         "jdbc:db2://<host>:<port>/<database>");
+        //TODO: Uncomment and modify once mssqlserver and db2 are supported for 4.2
+        //put("mssqlserver", "jdbc:jtds:sqlserver://<host>:<port>/<database>");
+        //put("db2",         "jdbc:db2://<host>:<port>/<database>");
     }};
     
     private static final Map DATABASE_TYPE_TO_DEFAULT_PORT_MAP = new HashMap()
@@ -79,8 +81,9 @@ public class DBValidator
         put("mysql",       "3306");
         put("postgresql",  "5432");
         put("oracle",      "1521");
-        put("mssqlserver", "1433");
-        put("db2",         "50000");
+        //TODO: Uncomment and modify once mssqlserver and db2 are supported for 4.2        
+        //put("mssqlserver", "1433");
+        //put("db2",         "50000");
     }};
 
     
@@ -172,17 +175,7 @@ public class DBValidator
         if (result)
         {
             progress(callback, "...recognised");
-            if  (databaseType.toLowerCase().equals("db2") || databaseType.toLowerCase().equals("mssqlserver"))
-            {
-                testResult.resultType   = TestResult.FAIL;
-                testResult.errorMessage = "DB2 and MSSqlServer are not supported until Alfresco 4.0.1";
-                testResult.ramification = "Alfresco may not install sucessfully.";
-                testResult.remedy       = "Install a supported database.";
-            }
-            else
-            {
-            	testResult.resultType = TestResult.PASS;
-            }
+          	testResult.resultType = TestResult.PASS;
         }
         else
         {

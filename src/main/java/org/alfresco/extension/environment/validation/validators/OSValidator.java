@@ -56,9 +56,11 @@ public class OSValidator
 
     // OS versions
     private final static String OS_NAME_WINDOWS_SERVER_2008 = "Windows Server 2008 R2";
+    private final static String OS_NAME_WINDOWS_SERVER_2012 = "Windows Server 2012";
     private final static String OS_VERSION_SOLARIS_10       = "5.10";
-    private final static String OS_VERSION_RHEL_5_5         = "5.5";
-    private final static String OS_VERSION_RHEL_6_1         = "6.1";
+    //private final static String OS_VERSION_RHEL_5_5         = "5.5";
+    //private final static String OS_VERSION_RHEL_6_1         = "6.1";
+    private final static String OS_VERSION_RHEL_6_4         = "6.4";
     private final static String OS_VERSION_SUSE_11          = "11";
     private final static String OS_VERSION_UBUNTU_10_04     = "10.04";
     
@@ -122,13 +124,14 @@ public class OSValidator
                 
                 validateLinux(callback);
             }
-            else if (OS_NAME_SOLARIS.equals(osName))
-            {
-                testResult.resultType = TestResult.PASS;
-                endTest(callback, testResult);
+            // TODO - uncomment and modify once Solaris is supported by 4.2
+            //else if (OS_NAME_SOLARIS.equals(osName))
+            //{
+            //    testResult.resultType = TestResult.PASS;
+            //    endTest(callback, testResult);
                 
-                validateSolaris(callback);
-            }
+            //    validateSolaris(callback);
+            //}
             else if (OS_NAME_MAC_OSX.equals(osName))
             {
                 testResult.resultType          = TestResult.WARN;
@@ -141,7 +144,7 @@ public class OSValidator
             }
             else if (osName.startsWith(OS_NAME_PREFIX_WINDOWS))
             {
-                if (OS_NAME_WINDOWS_SERVER_2008.equals(osName))
+                if (OS_NAME_WINDOWS_SERVER_2008.equals(osName) || OS_NAME_WINDOWS_SERVER_2012.equals(osName))
                 {
                     testResult.resultType = TestResult.PASS;
                 }
@@ -195,7 +198,7 @@ public class OSValidator
         
             if (DISTRO_NAME_RHEL.equals(distribution))
             {
-                if ((OS_VERSION_RHEL_5_5.equals(version)) || (OS_VERSION_RHEL_6_1.equals(version)))
+                if ((OS_VERSION_RHEL_6_4.equals(version)))
                 {
                     testResult.resultType = TestResult.PASS;
                 }
@@ -204,10 +207,10 @@ public class OSValidator
                     testResult.resultType          = TestResult.WARN;
                     testResult.errorMessage        = "Unsupported RHEL version";
                     testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
-                    testResult.remedy              = "Install RHEL " + OS_VERSION_RHEL_5_5 + " or " + OS_VERSION_RHEL_6_1;
+                    testResult.remedy              = "Install RHEL " + OS_VERSION_RHEL_6_4;
                     testResult.urisMoreInformation = RHEL_URI;
                 }
-            }
+            }             
             else if (DISTRO_NAME_SUSE.equals(distribution))
             {
                 if (OS_VERSION_SUSE_11.equals(version))
@@ -223,21 +226,22 @@ public class OSValidator
                     testResult.urisMoreInformation = SUSE_URI;
                 }
             }
-            else if (DISTRO_NAME_UBUNTU.equals(distribution))
-            {
-                if (OS_VERSION_UBUNTU_10_04.equals(version))
-                {
-                    testResult.resultType = TestResult.PASS;
-                }
-                else
-                {
-                    testResult.resultType          = TestResult.WARN;
-                    testResult.errorMessage        = "Unsupported Ubuntu version";
-                    testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
-                    testResult.remedy              = "Install Ubuntu " + OS_VERSION_UBUNTU_10_04;
-                    testResult.urisMoreInformation = UBUNTU_URI;
-                }
-            }
+//            TODO - Uncomment and modify once Ubuntu is supported for 4.2
+//            else if (DISTRO_NAME_UBUNTU.equals(distribution))
+//            {
+//                if (OS_VERSION_UBUNTU_10_04.equals(version))
+//                {
+//                    testResult.resultType = TestResult.PASS;
+//                }
+//                else
+//                {
+//                    testResult.resultType          = TestResult.WARN;
+//                    testResult.errorMessage        = "Unsupported Ubuntu version";
+//                    testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
+//                    testResult.remedy              = "Install Ubuntu " + OS_VERSION_UBUNTU_10_04;
+//                    testResult.urisMoreInformation = UBUNTU_URI;
+//                }
+//            }
             else
             {
                 testResult.resultType          = TestResult.WARN;

@@ -47,10 +47,8 @@ public class oracle_jdbc_OracleDriver
 {
     // Supported Oracle versions
     private final static ComparablePair[] SUPPORTED_JDBC_DRIVER_VERSION = { new ComparablePair(new Integer(11), new Integer(2)) };
-    private final static String           ORACLE_10_2                   = "10.2";
-    private final static String           ORACLE_10_2_0_5               = ORACLE_10_2 + ".0.5";
     private final static String           ORACLE_11_2                   = "11.2";
-    private final static String           ORACLE_11_2_0_1_0             = ORACLE_11_2 + ".0.1.0";
+    private final static String           ORACLE_11_2_0_3_0             = ORACLE_11_2 + ".0.3.0";
     
     // "More information" URIs
     private final static String   ORACLE_URI_STR                        = "http://www.oracle.com/technology/software/products/database/";
@@ -99,24 +97,9 @@ public class oracle_jdbc_OracleDriver
                         {
                             progress(callback, version);
                             
-                            if (version.startsWith(ORACLE_10_2))
+                            if (version.startsWith(ORACLE_11_2))
                             {
-                                if (version.startsWith(ORACLE_10_2_0_5))
-                                {
-                                    testResult.resultType = TestResult.PASS;
-                                }
-                                else
-                                {
-                                    testResult.resultType          = TestResult.WARN;
-                                    testResult.errorMessage        = "Unsupported Oracle 10g version";
-                                    testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
-                                    testResult.remedy              = "Install Oracle v" + ORACLE_10_2_0_5;
-                                    testResult.urisMoreInformation = ALFRESCO_SPM_AND_ORACLE_URIS;
-                                }
-                            }
-                            else if (version.startsWith(ORACLE_11_2))
-                            {
-                                if (version.startsWith(ORACLE_11_2_0_1_0))
+                                if (version.startsWith(ORACLE_11_2_0_3_0))
                                 {
                                     testResult.resultType = TestResult.PASS;
                                 }
@@ -125,7 +108,7 @@ public class oracle_jdbc_OracleDriver
                                     testResult.resultType          = TestResult.WARN;
                                     testResult.errorMessage        = "Unsupported Oracle 11g version";
                                     testResult.ramification        = "Alfresco may function sufficiently well for development purposes but must not be used for production";
-                                    testResult.remedy              = "Install Oracle v" + ORACLE_11_2_0_1_0;
+                                    testResult.remedy              = "Install Oracle v" + ORACLE_11_2_0_3_0;
                                     testResult.urisMoreInformation = ALFRESCO_SPM_AND_ORACLE_URIS;
                                 }
                             }
@@ -134,7 +117,7 @@ public class oracle_jdbc_OracleDriver
                                 testResult.resultType          = TestResult.FAIL;
                                 testResult.errorMessage        = "Unsupported Oracle version";
                                 testResult.ramification        = "Alfresco will not function correctly on this version";
-                                testResult.remedy              = "Install Oracle 10g (v" + ORACLE_10_2_0_5 + ") or 11g (v" + ORACLE_11_2_0_1_0 + ")"; 
+                                testResult.remedy              = "Install Oracle 11g (v" + ORACLE_11_2_0_3_0 + ")"; 
                                 testResult.urisMoreInformation = ALFRESCO_SPM_AND_ORACLE_URIS;
                             }
                         }
@@ -145,7 +128,7 @@ public class oracle_jdbc_OracleDriver
                             testResult.resultType   = TestResult.FAIL;
                             testResult.errorMessage = "Unable to determine Oracle version";
                             testResult.ramification = "Alfresco may not function correctly";
-                            testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_5 + ") or 11g (v" + ORACLE_11_2_0_1_0 + ") is installed";
+                            testResult.remedy       = "Manually validate that Oracle 11g (v" + ORACLE_11_2_0_3_0 + ") is installed";
                         }
                     }
                     else
@@ -155,7 +138,7 @@ public class oracle_jdbc_OracleDriver
                         testResult.resultType   = TestResult.FAIL;
                         testResult.errorMessage = "Unable to determine Oracle version";
                         testResult.ramification = "Alfresco may not function correctly";
-                        testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_5 + ") or 11g (v" + ORACLE_11_2_0_1_0 + ") is installed";
+                        testResult.remedy       = "Manually validate that Oracle 11g (v" + ORACLE_11_2_0_3_0 + ") is installed";
                     }
                 }
                 else
@@ -165,7 +148,7 @@ public class oracle_jdbc_OracleDriver
                     testResult.resultType   = TestResult.FAIL;
                     testResult.errorMessage = "Unable to determine Oracle version";
                     testResult.ramification = "Alfresco may not function correctly";
-                    testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_5 + ") or 11g (v" + ORACLE_11_2_0_1_0 + ") is installed";
+                    testResult.remedy       = "Manually validate that Oracle 11g (v" + ORACLE_11_2_0_3_0 + ") is installed";
                 }
             }
             else
@@ -175,7 +158,7 @@ public class oracle_jdbc_OracleDriver
                 testResult.resultType   = TestResult.FAIL;
                 testResult.errorMessage = "Unable to determine Oracle version";
                 testResult.ramification = "Alfresco may not function correctly";
-                testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_5 + ") or 11g (v" + ORACLE_11_2_0_1_0 + ") is installed";
+                testResult.remedy       = "Manually validate that Oracle 11g (v" + ORACLE_11_2_0_3_0 + ") is installed";
             }
         }
         catch (SQLException se)
@@ -185,7 +168,7 @@ public class oracle_jdbc_OracleDriver
             testResult.resultType   = TestResult.FAIL;
             testResult.errorMessage = "Unable to determine Oracle version";
             testResult.ramification = "Alfresco may not function correctly";
-            testResult.remedy       = "Manually validate that Oracle 10g (v" + ORACLE_10_2_0_5 + ") or 11g (v" + ORACLE_11_2_0_1_0 + ") is installed";
+            testResult.remedy       = "Manually validate that 11g (v" + ORACLE_11_2_0_3_0 + ") is installed";
             testResult.rootCause    = se;
         }
         

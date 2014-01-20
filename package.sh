@@ -1,6 +1,6 @@
 #!/bin/sh
-VERSION=1.1
-NAME=Alfresco4.1-evt-${VERSION}
+VERSION=1.2
+NAME=Alfresco4.2-evt-${VERSION}
 
 # Build (afresh)
 mvn clean package

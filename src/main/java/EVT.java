@@ -70,7 +70,7 @@ public class EVT
         if (parameters.containsKey("-v"))                                  verboseMode = 1;
         if (parameters.containsKey("-V") || parameters.containsKey("-vv")) verboseMode = 2;
         
-        System.out.println("\nAlfresco Environment Validation Tool (for Alfresco Enterprise 4.1.2)");
+        System.out.println("\nAlfresco Environment Validation Tool (for Alfresco Enterprise 4.2)");
         System.out.println("--------------------------------------------------------------------");
 
         if (parameters.isEmpty()                                             ||
