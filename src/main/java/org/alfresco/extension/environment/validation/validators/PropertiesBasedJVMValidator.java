@@ -1,5 +1,7 @@
 package org.alfresco.extension.environment.validation.validators;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -7,7 +9,6 @@ import java.util.regex.Pattern;
 
 import org.alfresco.extension.environment.validation.AbstractValidator;
 import org.alfresco.extension.environment.validation.TestResult;
-import org.alfresco.extension.environment.validation.Validator;
 import org.alfresco.extension.environment.validation.ValidatorCallback;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -21,6 +22,8 @@ import org.apache.commons.configuration.PropertiesConfiguration;
  */
 public class PropertiesBasedJVMValidator extends AbstractValidator
 {
+    private final static String SYSTEM_PROPERTY_JVM_ARCHITECTURE_2 = "os.arch";
+    private final static String SYSTEM_PROPERTY_JVM_ARCHITECTURE   = "sun.arch.data.model";   // See http://stackoverflow.com/questions/2062020/how-can-i-tell-if-im-running-in-64-bit-jvm-or-32-bit-jvm
     private final static String VALIDATION_TOPIC = "JVM";
     private final static String SYSTEM_PROPERTY_JVM_VENDOR = "java.vendor";
     private final static String JAVA_DOWNLOAD_URI_STR = "http://www.oracle.com/technetwork/java/javase/downloads/index.html";
@@ -30,6 +33,30 @@ public class PropertiesBasedJVMValidator extends AbstractValidator
     static private final String PROPERTIES_FILE_NAMES = "jvm-validator.properties";
     private final static Pattern JVM_PATCHLEVEL_REGEX              = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)_([0-9]+)");
     static Configuration specificConfig = null;
+    
+    private final static Map OS_ARCH_TO_ARCHITECTURE_MAP = Collections.unmodifiableMap(new HashMap() {{ // This list comes from http://lopica.sourceforge.net/os.html 
+        put("x86",        "32");
+        put("x86_64",     "64");
+        put("i386",       "32");
+        put("i686",       "32?");  // This can be either 32bit or 64bit - insufficient information to know for sure
+        put("amd64",      "64");
+        put("sparc",      "64");
+        put("PowerPC",    "32?");  // This can be either 32bit or 64bit - insufficient information to know for sure
+        put("Power",      "32?");  // This can be either 32bit or 64bit - insufficient information to know for sure
+        put("Power_RS",   "32");
+        put("ppc",        "32");
+        put("ppc64",      "64");
+        put("arm",        "32");
+        put("armv41",     "32");
+        put("PA-RISC",    "32?");  // This can be either 32bit or 64bit - insufficient information to know for sure
+        put("PA_RISC",    "32?");  // This can be either 32bit or 64bit - insufficient information to know for sure
+        put("PA_RISC2.0", "32?");  // This can be either 32bit or 64bit - insufficient information to know for sure
+        put("IA64",       "64");
+        put("IA64N",      "64");
+        put("02.10.00",   "32");   // S/390
+        put("mips",       "32?");  // This can be either 32bit or 64bit - insufficient information to know for sure
+        put("alpha",      "64");
+    }});    
 
     public PropertiesBasedJVMValidator()
     {
@@ -58,7 +85,7 @@ public class PropertiesBasedJVMValidator extends AbstractValidator
 
         validateVendor(parameters, callback);
         validateVersion(parameters,callback);
-        // validateArchitecture(callback);
+        validateArchitecture(parameters, callback);
         // validateJavaHome(callback);
     }
 
@@ -236,12 +263,85 @@ public class PropertiesBasedJVMValidator extends AbstractValidator
         {
             testResult.resultType          = TestResult.WARN;
             testResult.errorMessage        = "Unable to determine JVM patchlevel";
-            testResult.ramification        = "Please manually validate that a " + "1.6" + " JVM, patchlevel ";
-            testResult.remedy              = "Install a " +  requiredJVMVersion  + "patchlevel " + minimumPatchLevel + " or higher";
+            testResult.ramification        = "Please manually validate that a " + requiredJVMVersion + " JVM, patchlevel " + minimumPatchLevel + " or higher is installed";
+            testResult.remedy              = "Install a " +  requiredJVMVersion  + " patchlevel " + minimumPatchLevel + " or higher is installed";
             testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
         }
         endTest(callback, testResult);
     }
     
+    
+    private void validateArchitecture(Map parameters,final ValidatorCallback callback)
+    {
+        TestResult testResult = new TestResult();
+        
+        startTest(callback, "JVM Architecture");
+        
+        String jvmArchitecture = System.getProperty(SYSTEM_PROPERTY_JVM_ARCHITECTURE);
+        
+        if (jvmArchitecture == null)
+        {
+            // Try again, using the (less reliable) "os.arch" property
+            String osArch = System.getProperty(SYSTEM_PROPERTY_JVM_ARCHITECTURE_2);
+            
+            if (osArch != null)
+            {
+                jvmArchitecture = (String)OS_ARCH_TO_ARCHITECTURE_MAP.get(osArch);
+            }
+        }
+        
+        if (jvmArchitecture != null)
+        {
+            if ("64".equals(jvmArchitecture))
+            {
+                progress(callback, jvmArchitecture + " bit");
+                
+                testResult.resultType = TestResult.PASS;
+            }
+            else if ("32".equals(jvmArchitecture))
+            {
+                progress(callback, jvmArchitecture + " bit");
+                
+                testResult.resultType          = TestResult.INFO;
+                testResult.errorMessage        = "32 bit JVM detected";
+                testResult.ramification        = "32 bit architectures have inherent scalability limitations.  Alfresco will function correctly but for high-scale instances, a 64 bit architecture is recommended";
+                testResult.remedy              = "Consider installing a 64 bit JVM";
+                testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
+            }
+            else
+            {
+                progress(callback, "unknown");
+                
+                if ("32?".equals(jvmArchitecture))
+                {
+                    testResult.resultType          = TestResult.INFO;
+                    testResult.errorMessage        = "Probable 32 bit JVM detected";
+                    testResult.ramification        = "32 bit architectures have inherent scalability limitations.  Alfresco will function correctly but for high-scale instances, a 64 bit architecture is recommended";
+                    testResult.remedy              = "Manually validate the JVM architecture and consider installing a 64 bit JVM";
+                    testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
+                }
+                else
+                {
+                    testResult.resultType          = TestResult.WARN;
+                    testResult.errorMessage        = "Unable to determine JVM architecture";
+                    testResult.ramification        = "Alfresco may not start, and if it does it may not function properly";
+                    testResult.remedy              = "Manually validate that the JVM architecture is 32 bit or (preferably) 64 bit";
+                    testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
+                }
+            }
+        }
+        else
+        {
+            progress(callback, "unknown");
+            
+            testResult.resultType          = TestResult.WARN;
+            testResult.errorMessage        = "Unable to determine JVM architecture";
+            testResult.ramification        = "Alfresco may not start, and if it does it may not function properly";
+            testResult.remedy              = "Manually validate that the JVM architecture is 32 bit or (preferably) 64 bit";
+            testResult.urisMoreInformation = ALFRESCO_SPM_AND_JAVA_DOWNLOAD_URIS;
+        }
+        
+        endTest(callback, testResult);
+    }
 
 }

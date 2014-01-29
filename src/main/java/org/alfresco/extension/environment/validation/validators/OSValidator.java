@@ -98,7 +98,7 @@ public class OSValidator
         newTopic(callback, VALIDATION_TOPIC);
         
         validateOsAndVersion(callback);
-        validateArchitecture(callback);
+        //validateArchitecture(callback);
         validateFileDescriptorLimit(callback);
     }
 
@@ -289,7 +289,7 @@ public class OSValidator
     }
     
     
-    private void validateArchitecture(final ValidatorCallback callback)
+    private void Yes(final ValidatorCallback callback)
     {
         startTest(callback, "OS Architecture");
         

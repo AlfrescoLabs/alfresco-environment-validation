@@ -25,6 +25,9 @@
 
 
 
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
@@ -33,6 +36,7 @@ import org.alfresco.extension.environment.validation.TestResult;
 import org.alfresco.extension.environment.validation.ValidatorCallback;
 import org.alfresco.extension.environment.validation.validators.AllValidators;
 import org.alfresco.extension.environment.validation.validators.DBValidator;
+import org.alfresco.extension.environment.validation.validators.IndexDiskSpeedValidator;
 import org.alfresco.extension.util.PropertiesUtil;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -59,6 +63,7 @@ public class EVT
         put("-d", DBValidator.PARAMETER_DATABASE_NAME);
         put("-l", DBValidator.PARAMETER_DATABASE_LOGIN);
         put("-p", DBValidator.PARAMETER_DATABASE_PASSWORD);
+        put("-i", IndexDiskSpeedValidator.PARAMETER_DISK_LOCATION);
     }};
     
     public static Configuration config = null;
@@ -70,11 +75,13 @@ public class EVT
     /**
      * @param args
      */
-    public static void main(final String[] args)
+    public static void main(final String[] args) throws MalformedURLException
     {
         try
-        {
-            config = new PropertiesConfiguration("general.properties");
+        { 
+            URL url = new EVT().getClass().getClassLoader().getResource("general.properties");
+            config = new PropertiesConfiguration(url);
+
         }
         catch (ConfigurationException e)
         {
@@ -99,12 +106,13 @@ public class EVT
             !parameters.containsKey(DBValidator.PARAMETER_DATABASE_TYPE)     ||
             !parameters.containsKey(DBValidator.PARAMETER_DATABASE_HOSTNAME) ||
             !parameters.containsKey(DBValidator.PARAMETER_DATABASE_LOGIN)    ||
-            !parameters.containsKey(ALFRESCO_VERSION) )
+            !parameters.containsKey(ALFRESCO_VERSION)                        ||
+            !parameters.containsKey(IndexDiskSpeedValidator.PARAMETER_DISK_LOCATION) )  
         {
             System.out.println("");
             System.out.println("usage: evt[.sh|.cmd] [-?|--help] [-v] [-V|-vv]");
             System.out.println("            -a alfrescoversion -t databaseType -h databaseHost [-r databasePort]");
-            System.out.println("            [-d databaseName] -l databaseLogin [-p databasePassword]");
+            System.out.println("            [-d databaseName] -l databaseLogin [-p databasePassword] -i indexlocation");
             System.out.println("");
             System.out.println("where:      -?|--help        - display this help");
             System.out.println("            -v               - produce verbose output");
@@ -121,8 +129,9 @@ public class EVT
             System.out.println("            databaseLogin    - the login Alfresco will use to connect to the");
             System.out.println("                               database");
             System.out.println("            databasePassword - the password for that user (optional)");
+            System.out.println("            indexlocation    - a path to a folder that will contain Alfresco indexes");
             System.out.println("");
-            System.out.println("The tool must be run as the OS user that Alfresco will run as.  In particular");
+            System.out.println("The tool must be run as the OS user that Alfreso will run as.  In particular");
             System.out.println("it will report erroneous results if run as \"root\" (or equivalent on other");
             System.out.println("OSes) if Alfresco is not intended to be run as that user.");
             System.out.println("");
