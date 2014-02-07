@@ -48,7 +48,7 @@ public class AllValidators
                                                       new ServerHardwareValidator(),
                                                       new NetworkValidator(),
                                                       new ThirdPartyApplicationValidator(),
-                                                      //new DBValidator(),
+                                                      new DBValidator(),
                                                       new IndexDiskSpeedValidator()
                                                   };
 

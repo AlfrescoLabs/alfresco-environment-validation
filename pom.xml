@@ -28,17 +28,9 @@
 					<target>1.4</target>
 				</configuration>
 			</plugin>
-			<!-- plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>Main</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin -->
+			<!-- plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> 
+				<configuration> <archive> <manifest> <mainClass>Main</mainClass> </manifest> 
+				</archive> </configuration> </plugin -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4</version>
@@ -59,6 +51,16 @@
 						<goals>
 							<goal>single</goal>
 						</goals>
+					</execution>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptor>src/assembly/bin.xml</descriptor>
+							<finalName>${pom.artifactId}-dist</finalName>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
