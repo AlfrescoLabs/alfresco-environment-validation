@@ -6,7 +6,7 @@
 	<artifactId>alfresco42-environment-validation</artifactId>
 	<packaging>jar</packaging>
 	<name>Alfresco Environment Validation Utility</name>
-	<version>0.13-SNAPSHOT</version>   <!-- Don't forget to change package.sh every time this value changes! -->
+	<version>0.14-SNAPSHOT</version>   <!-- Don't forget to change package.sh every time this value changes! -->
 	<licenses>
 		<license>
 			<name>GNU Library or Lesser General Public License (LGPL)</name>
@@ -64,7 +64,7 @@
 						</goals>
 						<configuration>
 							<descriptor>src/assembly/bin.xml</descriptor>
-							<finalName>${pom.artifactId}-dist</finalName>
+							<finalName>${pom.artifactId}-${pom.version}</finalName>
 						</configuration>
 					</execution>
 				</executions>
