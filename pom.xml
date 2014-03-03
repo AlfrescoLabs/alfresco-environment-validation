@@ -97,7 +97,7 @@
 	</dependencies>
 	<scm>
 		<!-- connection>scm:hg:https://code.google.com/r/philippedubois-evt42/</connection-->
-		<developerConnection>scm:hg:https://code.google.com/r/philippedubois-evt42/</developerConnection>
+		<developerConnection>scm:hg:https://philippe.dubois%40alfresco.com@code.google.com/r/philippedubois-evt42//</developerConnection>
 		<!-- url>http://somerepository.com/view.cvs</url -->
 	</scm>
 </project>
