@@ -69,6 +69,11 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.2</version>
+			</plugin>
 		</plugins>
 	</build>
 	<distributionManagement>
@@ -96,7 +101,7 @@
 		</dependency>
 	</dependencies>
 	<scm>
-		<!-- connection>scm:hg:https://code.google.com/r/philippedubois-evt42/</connection-->
+		<!-- connection>scm:hg:https://code.google.com/r/philippedubois-evt42/</connection -->
 		<developerConnection>scm:hg:https://code.google.com/r/philippedubois-evt42/</developerConnection>
 		<!-- url>http://somerepository.com/view.cvs</url -->
 	</scm>
