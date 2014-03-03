@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.alfresco.extension</groupId>
+	<groupId>org.alfresco.support.support-tools</groupId>
 	<artifactId>alfresco42-environment-validation</artifactId>
 	<packaging>jar</packaging>
 	<name>Alfresco Environment Validation Utility</name>
-	<version>0.14-SNAPSHOT</version>   <!-- Don't forget to change package.sh every time this value changes! -->
+	<version>0.15-SNAPSHOT</version>   <!-- Don't forget to change package.sh every time this value changes! -->
 	<licenses>
 		<license>
 			<name>GNU Library or Lesser General Public License (LGPL)</name>
@@ -25,7 +25,7 @@
 		<plugins>
 			<plugin>
 				<!-- Target an ancient JVM to try to ensure that this tool can run anywhere 
-					that a JVM (no matter how crusty!) is installed.  --> 
+					that a JVM (no matter how crusty!) is installed. -->
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
@@ -64,14 +64,25 @@
 						</goals>
 						<configuration>
 							<descriptor>src/assembly/bin.xml</descriptor>
-							<finalName>${pom.artifactId}-${pom.version}</finalName> 
+							<finalName>${pom.artifactId}-${pom.version}</finalName>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build>
-
+	<distributionManagement>
+		<repository>
+			<id>public.repo</id>
+			<name>Alfresco Internal Repository</name>
+			<url>https://artifacts.alfresco.com/nexus/content/repositories/alfresco-public-support-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>internal.repo</id>
+			<name>Alfresco Public Repository</name>
+			<url>https://artifacts.alfresco.com/nexus/content/repositories/alfresco-support-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.hyperic</groupId>
@@ -84,4 +95,9 @@
 			<version>1.7</version>
 		</dependency>
 	</dependencies>
+	<scm>
+		<!-- connection>scm:hg:https://code.google.com/r/philippedubois-evt42/</connection-->
+		<developerConnection>scm:hg:https://code.google.com/r/philippedubois-evt42/</developerConnection>
+		<!-- url>http://somerepository.com/view.cvs</url -->
+	</scm>
 </project>
