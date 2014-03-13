@@ -1,0 +1,14 @@
+<document>
+  <properties>
+    <title>Alfresco Environment Validation Tool</title>
+    <author email="info@alfresco.com">Alfresco Software</author>
+  </properties>
+  <body>
+    <release version="1.0" date="2014-03-11" description="Alfresco 4.x compatible release">
+        <action type="improvement">Example </action>
+        <action type="add">Example</action>
+        <action type="update">Example</action>
+        <action type="remove">Example</action>
+    </release>
+  </body>
+</document>

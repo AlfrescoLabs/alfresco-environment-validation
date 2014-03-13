@@ -1,0 +1,54 @@
+
+=Compiling the tool=
+==Insuring you have a compatible compiling environment==
+
+Issue in a terminal:
+
+java -version
+You should insure that you have JDK version 1.5+ installed
+
+==Check out the sources==
+
+Insure that you have installed source code Mercurial client:
+
+hg version
+
+If present the command should have an output similar to:
+
+Mercurial Distributed SCM (version 2.0.2)
+(see http://mercurial.selenic.com for more information)
+
+Copyright (coffee) 2005-2011 Matt Mackall and others
+This is free software; see the source for copying conditions. There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
+
+
+Check out the sources into the newly created folder
+Example:
+mkdir test
+cd test
+hg clone https://philippe.dubois%40alfresco.com@code.google.com/r/philippedubois-evt42/
+cd philippedubois-evt42
+
+==Compile and package using Maven==
+Insure that you have Maven 3.0.5 installed.
+
+mvn --version
+Apache Maven 3.0.5 (r01de14724cdef164cd33c7c8c2fe155faf9602da; 2013-02-19 14:51:28+0100)
+Maven home: /home/philippe/apache-maven-3.0.5
+Java version: 1.7.0, vendor: Oracle Corporation
+Java home: /home/philippe/jdk1.7.0/jre
+Default locale: en_US, platform encoding: UTF-8
+OS name: "linux", version: "3.2.0-58-generic", arch: "amd64", family: "unix"
+
+
+To install latest maven tool, please refer to http://maven.apache.org/
+
+The source code that you just checked out contains on its first level a "pom.xml" for Maven.
+
+Insure that you have it in your directory while issuing:
+
+mvn package
+
+
+After a successful compilation and packaging, have a look at the "target" sub folder, it should contain  alfresco42-environment-validation-dist-dist.zip 
