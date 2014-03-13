@@ -101,7 +101,8 @@
 	</dependencies>
 	<scm>
 		<!-- connection>scm:hg:https://code.google.com/r/philippedubois-evt42/</connection -->
-		<developerConnection>scm:hg:https://code.google.com/r/philippedubois-evt42/</developerConnection>
+		<!--developerConnection>scm:hg:https://code.google.com/r/philippedubois-evt42/</developerConnection -->
+		<developerConnection>scm:hg:https://code.google.com/p/alfresco-environment-validation/</developerConnection>
 		<!-- url>http://somerepository.com/view.cvs</url -->
 	</scm>
 </project>
