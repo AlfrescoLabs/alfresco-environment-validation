@@ -1,0 +1,48 @@
+Description
+
+  This module provides an environment validation tool that helps determine whether a server is suitable for hosting the {{{http://www.alfresco.com/} Alfresco}} open source CMS.
+
+  The tool is distributed as an archive (zip) file that contains executable scripts that will run the tool. The tool itself is implemented as a Java (JVM 1.5+) command line application.
+
+  Please note that this tool is not exhaustive - it simply validates some of the more common environmental problems Alfresco has seen. Administrators intending to install Alfresco should ensure they have fully validated that their environment is on the {{{http://www.alfresco.com/services/subscription/supported-platforms} Alfresco Supported Stack}}.  They should also ensure they have reviewed, understood and applied the various installation related information available from the {{{http://support.alfresco.com/} Alfresco Support Portal}, the {{{http://wiki.alfresco.com} Alfresco Wiki}} and official product documentation.
+
+  After completing environment validation, but prior to installation, administrators should also review the {{{http://support.alfresco.com/ics/support/default.asp?deptID=15026} Alfresco Day Zero Configuration Guide}}, to ensure they are able to complete basic configuration of Alfresco immediately following installation.
+
+Pre-requisites
+
+  JVM 1.5+ 
+
+Downloading the tool
+
+  You can directly donwload the tool from the Maven artifact repository {{{https://artifacts.alfresco.com/nexus/content/groups/public/org/alfresco/support/${project.artifactId}/${project.version}/${project.artifactId}-${project.version}-dist.zip }here}}.
+
+  For usage with Maven, please check the {{{./dependency-info.html}Dependency Information}} page.
+  
+Running the Tool
+
+--------------------------------------------------------------------------------------------------
+  usage: evt[.sh|.cmd] [-?|--help] [-v] [-V|-vv]
+              -t databaseType -h databaseHost [-r databasePort]
+              [-d databaseName] -l databaseLogin [-p databasePassword]
+
+  where:      -?|--help        - display this help
+              -v               - produce verbose output
+              -V|-vv           - produce super-verbose output (stack traces)
+              alfrescoversion  - Version for which the verification is made .  May be one of:
+                               4.0.0,4.0.1,4.0.2,4.1.1,4.1.2,4.1.3,4.1.4,4.1.5,4.1.6,4.2
+              databaseType     - the type of database.  May be one of:
+                                 mysql, postgresql, oracle, mssqlserver, db2
+              databaseHost     - the hostname of the database server
+              databasePort     - the port the database is listening on (optional -
+                                 defaults to default for the database type)
+              databaseName     - the name of the Alfresco database (optional -
+                                 defaults to 'alfresco')
+              databaseLogin    - the login Alfresco will use to connect to the
+                                 database
+              databasePassword - the password for that user (optional)
+              indexlocation    - a path to a folder that will contain Alfresco indexes
+----------------------------------------------------------------------------------------------------
+
+  The tool must be run as the OS user that Alfresco will run as. In particular it will report misleading results if run as "root" (or equivalent on other OSes) if Alfresco is not intended to be run as that user.
+
+  For execution example, please click {{{./building.html#Example:}here}}.
