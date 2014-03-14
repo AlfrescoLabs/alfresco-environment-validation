@@ -51,6 +51,7 @@
         <menu name="Alfresco Environment Validation Tool">
             <item name="Introduction" href="index.html"/>
             <item name="Building from Sources" href="building.html" />
+            <item name="Usage example" href="usage.html" />
         </menu>
         
         <menu ref="reports" />

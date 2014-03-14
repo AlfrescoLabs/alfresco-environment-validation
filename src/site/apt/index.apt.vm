@@ -4,19 +4,22 @@ Description
 
   The tool is distributed as an archive (zip) file that contains executable scripts that will run the tool. The tool itself is implemented as a Java (JVM 1.5+) command line application.
 
-  Please note that this tool is not exhaustive - it simply validates some of the more common environmental problems Alfresco has seen. Administrators intending to install Alfresco should ensure they have fully validated that their environment is on the {{{http://www.alfresco.com/services/subscription/supported-platforms} Alfresco Supported Stack}}.  They should also ensure they have reviewed, understood and applied the various installation related information available from the {{{http://support.alfresco.com/} Alfresco Support Portal}, the {{{http://wiki.alfresco.com} Alfresco Wiki}} and official product documentation.
+  Please note that this tool is not exhaustive - it simply validates some of the more common environmental problems Alfresco has seen. Administrators intending to install Alfresco should ensure they have fully validated that their environment is on the {{{http://www.alfresco.com/services/subscription/supported-platforms} Alfresco Supported Stack}}. They should also ensure they have reviewed, understood and applied the various installation related information available from the {{{http://support.alfresco.com/} Alfresco Support Portal}}, the {{{http://wiki.alfresco.com} Alfresco Wiki}} and official product documentation.
 
   After completing environment validation, but prior to installation, administrators should also review the {{{http://support.alfresco.com/ics/support/default.asp?deptID=15026} Alfresco Day Zero Configuration Guide}}, to ensure they are able to complete basic configuration of Alfresco immediately following installation.
 
-Pre-requisites
-
-  JVM 1.5+ 
 
 Downloading the tool
 
-  You can directly donwload the tool from the Maven artifact repository {{{https://artifacts.alfresco.com/nexus/content/groups/public/org/alfresco/support/${project.artifactId}/${project.version}/${project.artifactId}-${project.version}-dist.zip }here}}.
+  The latest version of the tool is ${project.version} and change log for that version is to be found {{{./changes-report.html} here}}.
+  
+  You can directly download the tool from the Maven artifact repository {{{https://artifacts.alfresco.com/nexus/content/groups/public/org/alfresco/support/${project.artifactId}/${project.version}/${project.artifactId}-${project.version}-dist.zip }here}}.
 
   For usage with Maven, please check the {{{./dependency-info.html}Dependency Information}} page.
+
+Pre-requisites
+
+  * JVM 1.5+ 
   
 Running the Tool
 
@@ -45,4 +48,12 @@ Running the Tool
 
   The tool must be run as the OS user that Alfresco will run as. In particular it will report misleading results if run as "root" (or equivalent on other OSes) if Alfresco is not intended to be run as that user.
 
-  For execution example, please click {{{./building.html#Example:}here}}.
+  For execution example, please click check the {{{./usage.html}Usage}} page.
+  
+  
+Support
+
+	The tool is not covered by the Alfresco Support license (see {{{./license.html} License page}} for further details) and it's provided as a best practice tool to validate your
+	environment. It is useful to share with Alfresco Support results of the validation tool when opening a support case. 
+
+	This tool is open source and developed in {{{./source-repository.html}Google Code}} and contributions are welcome.
