@@ -6,7 +6,7 @@
 	<packaging>jar</packaging>
 	<name>Alfresco Environment Validation Tool</name>
 	<description>Utility to validate Alfresco installations against pre-requisites from an environment and architecture standpoint</description>
-	<version>1.0-beta-2</version>   <!-- Don't forget to change package.sh every time this value changes! -->
+	<version>1.1-SNAPSHOT</version>   <!-- Don't forget to change package.sh every time this value changes! -->
 	<licenses>
 		<license>
 			<name>GNU Library or Lesser General Public License (LGPL)</name>
