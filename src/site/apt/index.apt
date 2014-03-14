@@ -1,105 +1,46 @@
-=Description=
-This module provides an environment validation tool that helps determine whether a server is suitable for hosting the [http://www.alfresco.com/ Alfresco] open source CMS.
+Description
 
-The tool is distributed as an archive (zip) file that contains executable scripts that will run the tool.  The tool itself is implemented as a Java (JVM 1.5+) command line application.
+  This module provides an environment validation tool that helps determine whether a server is suitable for hosting the [http://www.alfresco.com/ Alfresco] open source CMS.
 
-Please note that this tool is not exhaustive - it simply validates some of the more common environmental problems Alfresco has seen. Administrators intending to install Alfresco should ensure they have fully validated that their environment is on the [http://www.alfresco.com/services/subscription/supported-platforms/  Alfresco Supported Stack].  They should also ensure they have reviewed, understood and applied the various installation related information available from the [http://support.alfresco.com/ Alfresco Support Portal], the [http://wiki.alfresco.com Alfresco Wiki] and official product documentation.
+  The tool is distributed as an archive (zip) file that contains executable scripts that will run the tool. The tool itself is implemented as a Java (JVM 1.5+) command line application.
 
-After completing environment validation, but prior to installation, administrators should also review the [http://support.alfresco.com/ics/support/default.asp?deptID=15026 Alfresco Day Zero Configuration Guide], to ensure they are able to complete basic configuration of Alfresco immediately following installation.
+  Please note that this tool is not exhaustive - it simply validates some of the more common environmental problems Alfresco has seen. Administrators intending to install Alfresco should ensure they have fully validated that their environment is on the [http://www.alfresco.com/services/subscription/supported-platforms/  Alfresco Supported Stack].  They should also ensure they have reviewed, understood and applied the various installation related information available from the [http://support.alfresco.com/ Alfresco Support Portal], the [http://wiki.alfresco.com Alfresco Wiki] and official product documentation.
 
-=Pre-requisites=
-JVM 1.5+ 
+  After completing environment validation, but prior to installation, administrators should also review the [http://support.alfresco.com/ics/support/default.asp?deptID=15026 Alfresco Day Zero Configuration Guide], to ensure they are able to complete basic configuration of Alfresco immediately following installation.
 
-=Downloading the tool=
-You can download the tool by clicking [https://artifacts.alfresco.com/nexus/service/local/repositories/alfresco-public-support-releases/content/org/alfresco/support/support-tools/alfresco-environment-validation/1.0-beta-1/alfresco-environment-validation-1.0-beta-1-dist.zip here] and unzip it locally.
+Pre-requisites
 
-=Running the Tool=
+  JVM 1.5+ 
 
+Downloading the tool
 
-usage: evt[.sh|.cmd] [-?|--help] [-v] [-V|-vv]
-            -t databaseType -h databaseHost [-r databasePort]
-            [-d databaseName] -l databaseLogin [-p databasePassword]
+  You can download the tool by clicking [https://artifacts.alfresco.com/nexus/service/local/repositories/alfresco-public-support-releases/content/org/alfresco/support/support-tools/alfresco-environment-validation/1.0-beta-1/alfresco-environment-validation-1.0-beta-1-dist.zip here] and unzip it locally.
 
-where:      -?|--help        - display this help
-            -v               - produce verbose output
-            -V|-vv           - produce super-verbose output (stack traces)
-            alfrescoversion  - Version for which the verification is made .  May be one of:
-                               4.0.0,4.0.1,4.0.2,4.1.1,4.1.2,4.1.3,4.1.4,4.1.5,4.1.6,4.2
-            databaseType     - the type of database.  May be one of:
-                               mysql, postgresql, oracle, mssqlserver, db2
-            databaseHost     - the hostname of the database server
-            databasePort     - the port the database is listening on (optional -
-                               defaults to default for the database type)
-            databaseName     - the name of the Alfresco database (optional -
-                               defaults to 'alfresco')
-            databaseLogin    - the login Alfresco will use to connect to the
-                               database
-            databasePassword - the password for that user (optional)
-            indexlocation    - a path to a folder that will contain Alfresco indexes
+Running the Tool
 
+--------------------------------------------------------------------------------------------------
+  usage: evt[.sh|.cmd] [-?|--help] [-v] [-V|-vv]
+              -t databaseType -h databaseHost [-r databasePort]
+              [-d databaseName] -l databaseLogin [-p databasePassword]
 
-The tool must be run as the OS user that Alfresco will run as.  In particular
-it will report misleading results if run as "root" (or equivalent on other
-OSes) if Alfresco is not intended to be run as that user.
+  where:      -?|--help        - display this help
+              -v               - produce verbose output
+              -V|-vv           - produce super-verbose output (stack traces)
+              alfrescoversion  - Version for which the verification is made .  May be one of:
+                               4.0.0,4.0.1,4.0.2,4.1.1,4.1.2,4.1.3,4.1.4,4.1.5,4.1.6,4.2
+              databaseType     - the type of database.  May be one of:
+                                 mysql, postgresql, oracle, mssqlserver, db2
+              databaseHost     - the hostname of the database server
+              databasePort     - the port the database is listening on (optional -
+                                 defaults to default for the database type)
+              databaseName     - the name of the Alfresco database (optional -
+                                 defaults to 'alfresco')
+              databaseLogin    - the login Alfresco will use to connect to the
+                                 database
+              databasePassword - the password for that user (optional)
+              indexlocation    - a path to a folder that will contain Alfresco indexes
+----------------------------------------------------------------------------------------------------
 
-=Deploy the tool=
+  The tool must be run as the OS user that Alfresco will run as. In particular it will report misleading results if run as "root" (or equivalent on other OSes) if Alfresco is not intended to be run as that user.
 
-Unzip alfresco42-environment-validation-dist-dist.zip in a in installation folder of your choice.
-
-cd alfresco42-environment-validation-dist
-
-Depending if you are on Linux, Mac or Windows:
-
-evt.sh <arguments>
-
-
-or
-
-
-evt.cmt <arguments>
-
-
-
-Example:
-evt.sh -a 4.2.0  -V  -t mysql -h localhost  -d alfresco -l alfresco -p alfresco -i /home/philippe/test
-Alfresco Environment Validation Tool (for Alfresco Enterprise 4.0.0,4.0.1,4.0.2,4.1.1,4.1.2,4.1.3,4.1.4,4.1.5,4.1.6,4.1.7,4.2.0)
-------------------------------------------------------------------
-
-Validating JVM
-  Version               : 1.7.0 Oracle Corporation ....................PASS
-  Patch level           : .............................................WARN!
-    Reason              : Unable to determine JVM patchlevel
-    Ramification        : Please manually validate that a 1.7 JVM, patchlevel 25 or higher is installed
-    Remedy              : Install a 1.7 patchlevel 25 or higher is installed
-    For more information: http://www.alfresco.com/services/support/stacks/
-                        : https://network.alfresco.com/?f=default&o=workspace://SpacesStore/4defa351-68cb-4491-9f23-46fb861ddd05
-                        : http://www.oracle.com/technetwork/java/javase/downloads/index.html
-
-  JVM Architecture      : 64 bit ......................................PASS
-
-Validating Operating System
-  OS                    : Linux .......................................PASS
-  Distribution          : Ubuntu 12.04 ................................WARN!
-    Reason              : Unsupported Ubuntu version
-    Ramification        : Alfresco may function sufficiently well for development purposes but must not be used for production
-    Remedy              : Install Ubuntu 10.04
-    For more information: http://www.ubuntu.com/desktop/get-ubuntu/download
-
-  File Descriptors      : 4096 ........................................PASS
-
-Validating Server Hardware
-  CPU Clock Speed       : 2601Mhz .....................................PASS
-  CPU Count             : 8 sockets, 8 cores ..........................PASS
-  Installed RAM         : 7872MB ......................................PASS
-
-Validating Network
-  Local Hostname        : philippe-Latitude-E6530 .....................PASS
-  IP Address            : 192.168.0.14 ................................PASS
-  DNS Hostname          : philippe-Latitude-E6530 .....................PASS
-  TCP 8005 (Tomcat)     : available ...................................PASS
-  TCP 8080 (HTTP)       : available ...................................PASS
-  TCP 50500 (RMI)       : available ...................................PASS
-  TCP 21 (FTP)          : unavailable .................................WARN!
-    Reason              : Permission denied
-    Ramification        : FTP protocol will be unavailable
-    Remedy              : Check for running processes that are using this port (eg. existing FTP servers), on non-Windows OSes consider reconfiguring Alfresco to use a non-privileged port then use a port forwarding tool (such as iptables..
+  For execution example, please click {{{./building.html#Example:}here}}.

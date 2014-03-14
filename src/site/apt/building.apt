@@ -1,54 +1,360 @@
 
-=Compiling the tool=
-==Insuring you have a compatible compiling environment==
+Compiling the tool
 
-Issue in a terminal:
+* Insuring you have a compatible compiling environment
 
-java -version
-You should insure that you have JDK version 1.5+ installed
+  Issue in a terminal:
 
-==Check out the sources==
+------------------
+  java -version
+------------------ 
+  You should insure that you have JDK version 1.5+ installed
+  
+* Check out the sources
 
-Insure that you have installed source code Mercurial client:
+  Insure that you have installed source code Mercurial client:
+  
+--------------
+  hg version
+--------------
 
-hg version
+  If present the command should have an output similar to:
 
-If present the command should have an output similar to:
+-----------------------------------------------------------------------------
+  Mercurial Distributed SCM (version 2.0.2)
+  (see http://mercurial.selenic.com for more information)
 
-Mercurial Distributed SCM (version 2.0.2)
-(see http://mercurial.selenic.com for more information)
+  Copyright (coffee) 2005-2011 Matt Mackall and others
+  This is free software; see the source for copying conditions. There is NO
+  warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
+-----------------------------------------------------------------------------
 
-Copyright (coffee) 2005-2011 Matt Mackall and others
-This is free software; see the source for copying conditions. There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
+  Check out the sources into the newly created folder
+
+  Example:
+  
+-----------------------------------------------------------------------
+  mkdir test
+  cd test
+  hg clone https://code.google.com/p/alfresco-environment-validation/ 
+  cd alfresco-environment-validation
+-----------------------------------------------------------------------
+
+  Note: for more information if you want to be able to push your own code, please refer to {{{https://code.google.com/p/alfresco-environment-validation/source/checkout}here}}.
+
+* Compile and package using Maven
+
+  Insure that you have Maven 3.0.5+ installed.
+  
+--------------------------------------------------------------------------------------------
+  mvn --version
+  Apache Maven 3.0.5 (r01de14724cdef164cd33c7c8c2fe155faf9602da; 2013-02-19 14:51:28+0100)
+  Maven home: /home/philippe/apache-maven-3.0.5
+  Java version: 1.7.0, vendor: Oracle Corporation
+  Java home: /home/philippe/jdk1.7.0/jre
+  Default locale: en_US, platform encoding: UTF-8
+  OS name: "linux", version: "3.2.0-58-generic", arch: "amd64", family: "unix"
+--------------------------------------------------------------------------------------------
+
+  To install latest maven tool, please refer to {{{http://maven.apache.org/}http://maven.apache.org/}}
+  
+  The source code that you just checked out contains on its first level a "pom.xml" for Maven.
+
+  Insure that you have it in your directory while issuing:
+
+-----------------
+  mvn package
+-----------------
 
 
-Check out the sources into the newly created folder
-Example:
-mkdir test
-cd test
-hg clone https://philippe.dubois%40alfresco.com@code.google.com/r/philippedubois-evt42/
-cd philippedubois-evt42
+  After a successful compilation and packaging, have a look at the "target" sub folder, it should contain  alfresco-environment-validation-xxx-dist.zip 
 
-==Compile and package using Maven==
-Insure that you have Maven 3.0.5 installed.
+* Deploy the tool
 
-mvn --version
-Apache Maven 3.0.5 (r01de14724cdef164cd33c7c8c2fe155faf9602da; 2013-02-19 14:51:28+0100)
-Maven home: /home/philippe/apache-maven-3.0.5
-Java version: 1.7.0, vendor: Oracle Corporation
-Java home: /home/philippe/jdk1.7.0/jre
-Default locale: en_US, platform encoding: UTF-8
-OS name: "linux", version: "3.2.0-58-generic", arch: "amd64", family: "unix"
+  Unzip alfresco-environment-validation-xxx-dist.zip in a in installation folder of your choice.
 
+----------------------------------------------
+  cd alfresco-environment-validation-xxx-dist
+----------------------------------------------
 
-To install latest maven tool, please refer to http://maven.apache.org/
+  Depending if you are on Linux, Mac or Windows:
 
-The source code that you just checked out contains on its first level a "pom.xml" for Maven.
+-------------------------
+  evt.sh <arguments>
+-------------------------
 
-Insure that you have it in your directory while issuing:
+  or
 
-mvn package
+------------------------
+  evt.cmt <arguments>
+------------------------
 
 
-After a successful compilation and packaging, have a look at the "target" sub folder, it should contain  alfresco42-environment-validation-dist-dist.zip 
+  {Example:}
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+  evt.sh -a 4.2.0  -V  -t mysql -h localhost  -d alfresco -l alfresco -p alfresco -i /home/philippe/test
+  Alfresco Environment Validation Tool (for Alfresco Enterprise 4.0.0,4.0.1,4.0.2,4.1.1,4.1.2,4.1.3,4.1.4,4.1.5,4.1.6,4.1.7,4.2.0)
+  ------------------------------------------------------------------
+  
+  Validating JVM
+    Version               : 1.7.0 Oracle Corporation ....................PASS
+    Patch level           : .............................................WARN!
+      Reason              : Unable to determine JVM patchlevel
+      Ramification        : Please manually validate that a 1.7 JVM, patchlevel 25 or higher is installed
+      Remedy              : Install a 1.7 patchlevel 25 or higher is installed
+      For more information: http://www.alfresco.com/services/support/stacks/
+                          : https://network.alfresco.com/?f=default&o=workspace://SpacesStore/4defa351-68cb-4491-9f23-46fb861ddd05
+                          : http://www.oracle.com/technetwork/java/javase/downloads/index.html
+
+    JVM Architecture      : 64 bit ......................................PASS
+
+  Validating Operating System
+    OS                    : Linux .......................................PASS
+    Distribution          : Ubuntu 12.04 ................................WARN!
+      Reason              : Unsupported Ubuntu version
+      Ramification        : Alfresco may function sufficiently well for development purposes but must not be used for production
+      Remedy              : Install Ubuntu 10.04
+      For more information: http://www.ubuntu.com/desktop/get-ubuntu/download
+
+    File Descriptors      : 4096 ........................................PASS
+
+  Validating Server Hardware
+    CPU Clock Speed       : 2601Mhz .....................................PASS
+    CPU Count             : 8 sockets, 8 cores ..........................PASS
+    Installed RAM         : 7872MB ......................................PASS
+
+  Validating Network
+    Local Hostname        : philippe-Latitude-E6530 .....................PASS
+    IP Address            : 192.168.0.14 ................................PASS
+    DNS Hostname          : philippe-Latitude-E6530 .....................PASS
+    TCP 8005 (Tomcat)     : available ...................................PASS
+    TCP 8080 (HTTP)       : available ...................................PASS
+    TCP 50500 (RMI)       : available ...................................PASS
+    TCP 21 (FTP)          : unavailable .................................WARN!
+      Reason              : Permission denied
+      Ramification        : FTP protocol will be unavailable
+      Remedy              : Check for running processes that are using this port (eg. existing FTP servers), on non-Windows OSes consider reconfiguring Alfresco to use a non-privileged port then use a port forwarding tool (such as iptables) to forward this port, alternate port 2121 will be tested next
+      Exception           :
+  java.net.BindException: Permission denied
+      at java.net.PlainSocketImpl.socketBind(Native Method)
+      at java.net.AbstractPlainSocketImpl.bind(AbstractPlainSocketImpl.java:374)
+      at java.net.ServerSocket.bind(ServerSocket.java:376)
+      at java.net.ServerSocket.<init>(ServerSocket.java:237)
+      at java.net.ServerSocket.<init>(ServerSocket.java:128)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.checkTcpPort(NetworkValidator.java:587)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateTcpPort(NetworkValidator.java:184)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateTcpPorts(NetworkValidator.java:118)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validate(NetworkValidator.java:97)
+      at org.alfresco.extension.environment.validation.validators.AllValidators.validate(AllValidators.java:62)
+      at EVT.main(EVT.java:143)
+
+
+    TCP 2121 (FTP)        : available ...................................PASS
+    TCP 139 (NetBT)       : unavailable .................................WARN!
+      Reason              : Permission denied
+      Ramification        : CIFS protocol will be unavailable to pre-Windows 2000 clients
+      Remedy              : Check for running processes that are using that port (eg. existing CIFS servers), on non-Windows OSes consider reconfiguring Alfresco to use a non-privileged port then use a port forwarding tool (such as iptables) to forward this port
+      Exception           :
+  java.net.BindException: Permission denied
+      at java.net.PlainSocketImpl.socketBind(Native Method)
+      at java.net.AbstractPlainSocketImpl.bind(AbstractPlainSocketImpl.java:374)
+      at java.net.ServerSocket.bind(ServerSocket.java:376)
+      at java.net.ServerSocket.<init>(ServerSocket.java:237)
+      at java.net.ServerSocket.<init>(ServerSocket.java:128)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.checkTcpPort(NetworkValidator.java:587)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateTcpPort(NetworkValidator.java:184)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateTcpPorts(NetworkValidator.java:118)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validate(NetworkValidator.java:97)
+      at org.alfresco.extension.environment.validation.validators.AllValidators.validate(AllValidators.java:62)
+      at EVT.main(EVT.java:143)
+
+
+    TCP 1139 (NetBT)      : available ...................................PASS
+    TCP 445 (SMB)         : unavailable .................................WARN!
+      Reason              : Permission denied
+      Ramification        : CIFS protocol will be unavailable
+      Remedy              : Check for running processes that are using this port (eg. existing CIFS servers), on non-Windows OSes consider reconfiguring Alfresco to use a non-privileged port then use a port forwarding tool (such as iptables) to forward this port
+      Exception           :
+  java.net.BindException: Permission denied
+      at java.net.PlainSocketImpl.socketBind(Native Method)
+      at java.net.AbstractPlainSocketImpl.bind(AbstractPlainSocketImpl.java:374)
+      at java.net.ServerSocket.bind(ServerSocket.java:376)
+      at java.net.ServerSocket.<init>(ServerSocket.java:237)
+      at java.net.ServerSocket.<init>(ServerSocket.java:128)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.checkTcpPort(NetworkValidator.java:587)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateTcpPort(NetworkValidator.java:184)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateTcpPorts(NetworkValidator.java:118)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validate(NetworkValidator.java:97)
+      at org.alfresco.extension.environment.validation.validators.AllValidators.validate(AllValidators.java:62)
+      at EVT.main(EVT.java:143)
+
+
+    TCP 4445 (SMB)        : available ...................................PASS
+    TCP 8100 (OpenOffice) : unavailable .................................WARN!
+      Reason              : Address already in use
+      Ramification        : OpenOffice daemon will be unable to start
+      Remedy              : Check for running processes that are using this port (eg. zombie OO processes)
+      Exception           :
+  java.net.BindException: Address already in use
+      at java.net.PlainSocketImpl.socketBind(Native Method)
+      at java.net.AbstractPlainSocketImpl.bind(AbstractPlainSocketImpl.java:374)
+      at java.net.ServerSocket.bind(ServerSocket.java:376)
+      at java.net.ServerSocket.<init>(ServerSocket.java:237)
+      at java.net.ServerSocket.<init>(ServerSocket.java:128)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.checkTcpPort(NetworkValidator.java:587)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateTcpPort(NetworkValidator.java:184)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateTcpPorts(NetworkValidator.java:118)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validate(NetworkValidator.java:97)
+      at org.alfresco.extension.environment.validation.validators.AllValidators.validate(AllValidators.java:62)
+      at EVT.main(EVT.java:143)
+
+
+    TCP 7070 (Sharepoint) : available ...................................PASS
+    TCP 25 (SMTP)         : unavailable .................................INFO
+      Reason              : Permission denied
+      Ramification        : SMTP protocol will be unavailable (note: not enabled by default)
+      Remedy              : Check for running processes that are using this port (eg. existing SMTP servers), on non-Windows OSes consider reconfiguring Alfresco to use a non-privileged port then use a port forwarding tool (such as iptables) to forward this port
+      Exception           :
+  java.net.BindException: Permission denied
+      at java.net.PlainSocketImpl.socketBind(Native Method)
+      at java.net.AbstractPlainSocketImpl.bind(AbstractPlainSocketImpl.java:374)
+      at java.net.ServerSocket.bind(ServerSocket.java:376)
+      at java.net.ServerSocket.<init>(ServerSocket.java:237)
+      at java.net.ServerSocket.<init>(ServerSocket.java:128)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.checkTcpPort(NetworkValidator.java:587)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateTcpPort(NetworkValidator.java:184)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateTcpPorts(NetworkValidator.java:118)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validate(NetworkValidator.java:97)
+      at org.alfresco.extension.environment.validation.validators.AllValidators.validate(AllValidators.java:62)
+      at EVT.main(EVT.java:143)
+
+
+    TCP 2525 (SMTP)       : available ...................................PASS
+    TCP 143 (IMAP)        : unavailable .................................INFO
+      Reason              : Permission denied
+      Ramification        : IMAP protocol will be unavailable (note: not enabled by default)
+      Remedy              : Check for running processes that are using this port (eg. existing IMAP servers), on non-Windows OSes consider reconfiguring Alfresco to use a non-privileged port then use a port forwarding tool (such as iptables) to forward this port
+      Exception           :
+  java.net.BindException: Permission denied
+      at java.net.PlainSocketImpl.socketBind(Native Method)
+      at java.net.AbstractPlainSocketImpl.bind(AbstractPlainSocketImpl.java:374)
+      at java.net.ServerSocket.bind(ServerSocket.java:376)
+      at java.net.ServerSocket.<init>(ServerSocket.java:237)
+      at java.net.ServerSocket.<init>(ServerSocket.java:128)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.checkTcpPort(NetworkValidator.java:587)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateTcpPort(NetworkValidator.java:184)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateTcpPorts(NetworkValidator.java:118)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validate(NetworkValidator.java:97)
+      at org.alfresco.extension.environment.validation.validators.AllValidators.validate(AllValidators.java:62)
+      at EVT.main(EVT.java:143)
+
+
+    UDP 137 (NetBT)       : unavailable .................................WARN!
+      Reason              : Permission denied
+      Ramification        : CIFS protocol will be unavailable to pre-Windows 2000 clients
+      Remedy              : Check for running processes that are using this port (eg. existing CIFS servers), on non-Windows OSes consider reconfiguring Alfresco to use a non-privileged port then use a port forwarding tool (such as iptables) to forward this port
+      Exception           :
+  java.net.BindException: Permission denied
+      at java.net.PlainDatagramSocketImpl.bind0(Native Method)
+      at java.net.AbstractPlainDatagramSocketImpl.bind(AbstractPlainDatagramSocketImpl.java:85)
+      at java.net.DatagramSocket.bind(DatagramSocket.java:375)
+      at java.net.DatagramSocket.<init>(DatagramSocket.java:230)
+      at java.net.DatagramSocket.<init>(DatagramSocket.java:283)
+      at java.net.DatagramSocket.<init>(DatagramSocket.java:255)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.checkUdpPort(NetworkValidator.java:621)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateUdpPort(NetworkValidator.java:219)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateUdpPorts(NetworkValidator.java:130)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validate(NetworkValidator.java:98)
+      at org.alfresco.extension.environment.validation.validators.AllValidators.validate(AllValidators.java:62)
+      at EVT.main(EVT.java:143)
+
+
+    UDP 138 (NetBT)       : unavailable .................................WARN!
+      Reason              : Permission denied
+      Ramification        : CIFS protocol will be unavailable to pre-Windows 2000 clients
+      Remedy              : Check for running processes that are using this port (eg. existing CIFS servers), on non-Windows OSes consider reconfiguring Alfresco to use a non-privileged port then use a port forwarding tool (such as iptables) to forward this port
+      Exception           :
+  java.net.BindException: Permission denied
+      at java.net.PlainDatagramSocketImpl.bind0(Native Method)
+      at java.net.AbstractPlainDatagramSocketImpl.bind(AbstractPlainDatagramSocketImpl.java:85)
+      at java.net.DatagramSocket.bind(DatagramSocket.java:375)
+      at java.net.DatagramSocket.<init>(DatagramSocket.java:230)
+      at java.net.DatagramSocket.<init>(DatagramSocket.java:283)
+      at java.net.DatagramSocket.<init>(DatagramSocket.java:255)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.checkUdpPort(NetworkValidator.java:621)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateUdpPort(NetworkValidator.java:219)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validateUdpPorts(NetworkValidator.java:130)
+      at org.alfresco.extension.environment.validation.validators.NetworkValidator.validate(NetworkValidator.java:98)
+      at org.alfresco.extension.environment.validation.validators.AllValidators.validate(AllValidators.java:62)
+      at EVT.main(EVT.java:143)
+
+
+  Database Hostname     : resolved ....................................PASS
+  Packet Loss           : (please wait) 0% ............................PASS
+  Average Response Time : 0.052ms .....................................PASS
+  Response Time Std Dev : 0.018ms .....................................PASS
+
+  Validating 3rd Party Apps
+    Can fork OpenOffice   : yes .........................................PASS
+    OpenOffice Version    : unknown .....................................WARN!
+      Reason              : Unable to determine OpenOffice version
+      Remedy              : Manually validate that OpenOffice v3.1 or greater is installed by running the 'soffice -headless -help' command
+
+    Can fork ImageMagick  : yes .........................................PASS
+    ImageMagick Version   : 6.6.9-7 .....................................PASS
+    Can fork pdf2swf      : yes .........................................PASS
+    pdf2swf Version       : 0.9.2 .......................................PASS
+
+  Validating Database
+    Database Type         : mysql ...recognised .........................PASS
+    JDBC Driver Loaded    : yes .........................................PASS
+    Database Connectivity : connected ...................................PASS
+    Scrollable Result Sets: true ........................................PASS
+    JDBC Driver Version   : 5.1 .........................................PASS
+    MySQL Version         : 5.5.34 ......................................FAIL!!
+      Reason              : Unsupported MySQL version
+      Ramification        : Alfresco will not function correctly on this version
+      Remedy              : Install MySQL 5.1 with at least patchlevel 51
+      For more information: http://dev.mysql.com/downloads/mysql/
+
+    Default Storage Engine: InnoDB ......................................PASS
+    Case Sensitivity Level: 0 ...........................................WARN!
+      Reason              : OS-specific identifier case sensitivity level configured
+      Ramification        : Backups of the Alfresco database will be OS specific
+      Remedy              : Reconfigure MySQL to use case-insensitive identifiers; specifically, set lower_case_table_names=1 in the MySQL configuration
+      For more information: http://dev.mysql.com/doc/refman/5.1/en/identifier-case-sensitivity.html
+
+    Auto-inc Lock Mode    : 1 ...........................................WARN!
+      Reason              : Non-optimal InnoDB auto-increment lock mode configured
+      Ramification        : Alfresco may perform poorly under heavy write load due to excessive blocking in MySQL
+      Remedy              : Reconfigure MySQL with InnoDB auto-increment lock mode 2; specifically, set innodb_autoinc_lock_mode=2 in the MySQL configuration
+      For more information: http://dev.mysql.com/doc/refman/5.1/en/innodb-auto-increment-handling.html
+
+    Wait Timeout          : 28800 .......................................PASS
+    Client Encoding       : utf8 ........................................PASS
+    Connection Encoding   : utf8 ........................................PASS
+    Database Encoding     : utf8 ........................................PASS
+    Filesystem Encoding   : binary ......................................PASS
+    Results Encoding      : utf8 ........................................PASS
+    Server Encoding       : utf8 ........................................PASS
+    System Encoding       : utf8 ........................................PASS
+    Unsafe for binlog     : OFF .........................................FAIL!!
+      Reason              : innodb_locks_unsafe_for_binlog should be set to ON
+      Ramification        : Alfresco will not function correctly
+      Remedy              : Correct the value of innodb_locks_unsafe_for_binlog and rerun this test
+      For more information: http://dev.mysql.com/doc/refman/5.1/en/innodb-parameters.html#sysvar_innodb_locks_unsafe_for_binlog
+
+
+  Validating speed of disk containing index
+    VALIDATE INDEX DISK SPEED: . . . . . . . . . . . .......................PASS
+      Reason              : Seek time is good! Value:6101
+
+
+
+                           **** FINAL GRADE: FAIL!! ****
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+  
