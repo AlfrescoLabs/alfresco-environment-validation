@@ -28,7 +28,9 @@
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -88,7 +90,6 @@ public class EVT
             // TODO Auto-generated catch block
             e.printStackTrace();
             System.exit(1);
-            
         }
         final Map parameters = parseParameters(args);
         
@@ -96,6 +97,11 @@ public class EVT
         if (parameters.containsKey("-V") || parameters.containsKey("-vv")) verboseMode = 2;
         //the from version and the to version must be put in property file
         String supportedVersions = PropertiesUtil.concatenatePropsValues(config, ALFRESCO_VERSION, ",");
+        List<String> supportedVersionsList = Arrays.asList(supportedVersions.split(","));
+        String alfrescoVersion = (String) parameters.get(ALFRESCO_VERSION);
+        boolean supportedVersion = (alfrescoVersion != null) && supportedVersionsList.contains(alfrescoVersion);
+        
+        
         System.out.println("\nAlfresco Environment Validation Tool (for Alfresco Enterprise " + supportedVersions + ")");
         System.out.println("------------------------------------------------------------------");
 
@@ -135,6 +141,11 @@ public class EVT
             System.out.println("it will report erroneous results if run as \"root\" (or equivalent on other");
             System.out.println("OSes) if Alfresco is not intended to be run as that user.");
             System.out.println("");
+        } else if(!supportedVersion)
+        {
+        	 System.out.println("");
+             System.out.println("Version " + alfrescoVersion + " is not in the list of the Alfresco versions supported by this tool.");
+             System.out.println("Please specify one of the following versions: " + supportedVersions);
         }
         else
         {

@@ -4,6 +4,23 @@
     <author email="info@alfresco.com">Alfresco Software</author>
   </properties>
   <body>
+    <release version="1.2-beta-3" date="2014-03-14" description="Alfresco 4.x compatible release and major internal refactoring">
+        <action type="update">Compatible and tested with Alfresco 4.2 Enterprise</action>
+        <action type="add" issue="17">Introduced disk speed check for indexes disk</action>
+        <action type="add" issue="41">Update License and document transitive dependencies licenses in Maven Site</action>
+        <action type="add" issue="45">Review port numbers described at http://wiki.alfresco.com/wiki/Port_numbers, and ensure EVT is checking all of them.</action>
+        <action type="add" issue="46">package.sh as to be removed</action>
+        <action type="update">Externalized all validation properties in properties files to increase maintainability</action>
+        <action type="remove" issue="35">Removed obsolete Alfresco links</action>
+        <action type="fix" issue="50">Invalid parameter values should be cleanly detected and rejected</action>
+    </release>
+    <release version="1.0-beta-2" date="2014-03-14" description="Alfresco 4.x compatible release and major internal refactoring">
+        <action type="update">Compatible and tested with Alfresco 4.2 Enterprise</action>
+        <action type="add" issue="17">Introduced disk speed check for indexes disk</action>
+        <action type="add" issue="41">Update License and document transitive dependencies licenses in Maven Site</action>
+        <action type="update">Externalized all validation properties in properties files to increase maintainability</action>
+        <action type="remove" issue="35">Removed obsolete Alfresco links</action>
+    </release>
     <release version="1.2-beta-1" date="2014-03-14" description="Alfresco 4.x compatible release and major internal refactoring">
         <action type="update">Compatible and tested with Alfresco 4.2 Enterprise</action>
         <action type="add" issue="17">Introduced disk speed check for indexes disk</action>
