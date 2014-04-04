@@ -34,23 +34,22 @@ public class IndexDiskSpeedValidator extends AbstractValidator
 
         validateSeekReadWriteSpeed(parameters, callback);
 
-        // validateOsAndVersion(callback);
-        // validateArchitecture(callback);
-        // validateFileDescriptorLimit(callback);
+
     }
 
     private void validateSeekReadWriteSpeed(final Map parameters, final ValidatorCallback callback)
     {
-        startTest(callback, "VALIDATE INDEX DISK SPEED");
+        String thresholdIndication = "Value in [0 .. 9999] is good, it compares to a SSD,\n  " +
+                "Value in [10000 .. 20999] is normal, it compares to a eSata spinning drive,\n  " +
+                "Value in [21000 .. 49999] is abnormaly slow, it compares to a USB spinning drive,\n  " +
+                "Value above or equal to 50000 is not appropriate for Alfresco index";
+        startTest(callback, thresholdIndication);
         long speed= -1;
         String indexLocation = (String)parameters.get(PARAMETER_DISK_LOCATION);
         try
         {
-
+            progress(callback, "(please wait)");
             String content = "A";
-            //File file = new File("/media/Elements/test/test.txt");
-            //File file = new File("/media/WD500/test/test.txt");
-            //File file = new File("/home/philippe/evt/test.txt");
             File file = new File(indexLocation + "/test.txt");
 
             // if file doesn't exists, then create it
@@ -65,8 +64,8 @@ public class IndexDiskSpeedValidator extends AbstractValidator
             for (int pos = 0; pos < 1024 * 1024 * 1024; pos++)
             {
                 bw.write(content);
-                if (pos % (1024 * 1024 * 100) == 0)
-                    progress(callback, ".");
+                //if (pos % (1024 * 1024 * 100) == 0)
+                //    progress(callback, ".");
             }
 
             bw.close();
@@ -99,6 +98,7 @@ public class IndexDiskSpeedValidator extends AbstractValidator
             e.printStackTrace();
         }
 
+
         TestResult testResult = new TestResult();
         if( (speed > 0) && (speed < 10000))
         {
@@ -106,22 +106,26 @@ public class IndexDiskSpeedValidator extends AbstractValidator
             testResult.errorMessage = "Seek time is good! Value:" + speed;
         }
         
-        if( (speed > 10000) && (speed < 21000))
+        if( (speed >= 10000) && (speed < 21000))
         {
             testResult.resultType = testResult.INFO;
             testResult.errorMessage = "Seek time is normal! Value:" + speed;
         }
         
-        if( (speed > 21000) && (speed < 50000))
+        if( (speed >= 21000) && (speed < 50000))
         {
             testResult.resultType = testResult.WARN;
-            testResult.errorMessage = "Seek time is abnormaly slow! Value:" + speed;
+            testResult.errorMessage = "Seek time is abnormaly slow! Value:" + speed ;
+            testResult.ramification        = "Alfresco indexing won't operate at normal speed please use faster disks!";
+            testResult.remedy              = "Locate alfresco index on fater disks!";
         }
         
-        if( (speed > 50000))
+        if( (speed >= 50000))
         {
             testResult.resultType = testResult.FAIL;
             testResult.errorMessage = "Seek time is too slow! Value:" + speed;
+            testResult.ramification        = "Alfresco indexing won't operate at normal speed faster disk is absolutely required!";
+            testResult.remedy              = "Locate alfresco index on fater disks!";
         }
         
 

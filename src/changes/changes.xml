@@ -10,6 +10,7 @@
         <action type="add" issue="41">Update License and document transitive dependencies licenses in Maven Site</action>
         <action type="add" issue="45">Review port numbers described at http://wiki.alfresco.com/wiki/Port_numbers, and ensure EVT is checking all of them.</action>
         <action type="add" issue="46">package.sh as to be removed</action>
+        <action type="add" issue="47">The speed check messaging could be improved.</action>
         <action type="update">Externalized all validation properties in properties files to increase maintainability</action>
         <action type="remove" issue="35">Removed obsolete Alfresco links</action>
         <action type="fix" issue="50">Invalid parameter values should be cleanly detected and rejected</action>
