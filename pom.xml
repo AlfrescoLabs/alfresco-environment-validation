@@ -165,7 +165,7 @@
 		<site>
 			<id>alfresco-artifacts</id>
 			<name>Alfresco Docs Public Repository</name>
-			<url>dav:https://artifacts.alfresco.com/nexus/content/repositories/alfresco-docs/${project.artifactId}/${project.version}</url>
+			<url>dav:https://artifacts.alfresco.com/nexus/content/repositories/alfresco-docs/${project.artifactId}/latest</url>
 		</site>
 	</distributionManagement>
 	<dependencies>
