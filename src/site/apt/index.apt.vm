@@ -21,6 +21,8 @@ Pre-requisites
 
   * JVM 1.5+ 
   
+  * Make sure the database jdbc driver (jar) in the evt/lib directory is compatible with your database and version  ex. Oracle 11g, make sure you have the ojdbc6.jar 
+  
 Running the Tool
 
 --------------------------------------------------------------------------------------------------
