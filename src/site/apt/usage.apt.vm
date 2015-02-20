@@ -1,6 +1,6 @@
 Using the tool
 
-  Unzip ${project.artifactId}-${project.version}-dist.zip in a in installation folder of your choice.
+  Unzip ${project.artifactId}-${project.version}-dist.zip in an installation folder of your choice.
 
 ----------------------------------------------
   cd ${project.artifactId}-${project.version}-dist
